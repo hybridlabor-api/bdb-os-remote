@@ -7,7 +7,7 @@
 ### Workstation Setup (Server Mode)
 Run the interactive wizard on your stationary desktop:
 ```bash
-npx @hybridlabor-api/bdb-os-remote installer
+npx @hybridlabor-api/npx @hybridlabor-api/bdb-os-remote@latest installer
 # Select [1] Workstation (Server Mode)
 ```
 Or start directly:
@@ -18,7 +18,7 @@ npx @hybridlabor-api/bdb-os-remote server --port 8000
 ### Laptop Setup (Client Mode)
 Run the wizard on your mobile laptop:
 ```bash
-npx @hybridlabor-api/bdb-os-remote installer
+npx @hybridlabor-api/npx @hybridlabor-api/bdb-os-remote@latest installer
 # Select [2] Laptop (Client Mode)
 # Enter your Workstation's Tailscale name (e.g. noah-workstation)
 ```

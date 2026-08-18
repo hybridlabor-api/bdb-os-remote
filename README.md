@@ -27,11 +27,13 @@ We recommend using the interactive universal installer. It natively supports mac
 ### 1. Via Native App (macOS, Windows, Linux)
 Download the `.dmg`, `.exe` (NSIS), or `.AppImage` directly from the **[GitHub Releases](https://github.com/hybridlabor-api/bdb-os-remote/releases)** page. 
 
-### 2. Via CLI (Universal)
-Run the installer wizard on both your Workstation and your Laptop:
+### 2. Via CLI (Universal & Auto-Shortcut)
+Run the one-click installer wizard on both your Workstation and your Laptop:
 ```bash
 npx @hybridlabor-api/bdb-os-remote@latest installer
 ```
+*(This automatically downloads the latest version, configures the gateway, generates Desktop shortcuts, and launches the BDB CONNECT Menubar App in one go!)*
+
 - **On your Workstation**: Select `[1] Workstation` to start the Gateway.
 - **On your Laptop**: Select `[2] Laptop` to configure your agent automatically (supports AGY, Codex, and Claude).
 

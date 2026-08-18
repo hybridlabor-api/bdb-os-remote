@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/hybridlabor-api/bdb-os-remote/compare/v1.1.0...v1.2.0) (2026-08-18)
+
+
+### Features
+
+* **arch:** unify CLI and UI by embedding electron and adding auto-launch wizard step ([06940fb](https://github.com/hybridlabor-api/bdb-os-remote/commit/06940fb04bb253de7ea7bc758a3506a9333a760e))
+* **ui:** add auto-update banner and 5-day notification tracker ([8b46180](https://github.com/hybridlabor-api/bdb-os-remote/commit/8b461807a84574b130673b578c75094dab2e474a))
+
 ## [1.1.0](https://github.com/hybridlabor-api/bdb-os-remote/compare/v1.0.0...v1.1.0) (2026-08-18)
 
 

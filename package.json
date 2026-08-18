@@ -7,7 +7,8 @@
   "bin": {
     "bdb-os-remote": "bin/cli.js",
     "bdb-remote": "bin/cli.js",
-    "bdb-remote-installer": "bin/installer.js"
+    "bdb-remote-installer": "bin/installer.js",
+    "installer": "bin/installer.js"
   },
   "publishConfig": {
     "access": "public"

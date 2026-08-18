@@ -216,7 +216,44 @@ export async function runWizard() {
     console.log("❌ Invalid selection. Exiting.");
   }
 
+
+  const launchUi = await ask("\n🚀 Möchtest du die grafische BDB CONNECT App jetzt starten und verknüpfen? (y/n) ");
+  if (launchUi.trim().toLowerCase() === "y") {
+    console.log("Starte Desktop App...");
+    const { spawn } = await import("node:child_process");
+    const { default: electronPath } = await import("electron");
+    const { fileURLToPath } = await import("node:url");
+    
+    // We already have 'path' and 'os' and 'fs' available in the file scope
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const uiPath = path.join(__dirname, "../src/ui/main.js");
+    
+    if (os.platform() === 'win32') {
+       try {
+           const pspath = path.join(os.tmpdir(), 'create_shortcut.ps1');
+           const iconPath = path.join(__dirname, "../src/ui/icon.png").replace(/\\/g, "\\");
+           const script = `
+$WshShell = New-Object -comObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut("$Home\\Desktop\\BDB CONNECT.lnk")
+$Shortcut.TargetPath = "npx.cmd"
+$Shortcut.Arguments = "@hybridlabor-api/bdb-os-remote@latest ui"
+$Shortcut.IconLocation = "${iconPath}"
+$Shortcut.Save()
+`;
+           fs.writeFileSync(pspath, script);
+           spawn("powershell.exe", ["-ExecutionPolicy", "Bypass", "-File", pspath], { stdio: 'ignore' }).unref();
+           console.log("✅ Windows Desktop-Verknüpfung wurde angelegt!");
+       } catch (e) {
+           console.log("Info: Desktop-Verknüpfung konnte nicht angelegt werden.");
+       }
+    }
+    
+    const child = spawn(electronPath, [uiPath], { detached: true, stdio: 'ignore' });
+    child.unref();
+  }
   rl.close();
+
 }
 
 // Auto-run if executed directly as script

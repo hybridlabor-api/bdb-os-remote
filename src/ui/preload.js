@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electron', {
   send: (channel, data) => {
-    const validChannels = ['toggle-server', 'open-web-ui'];
+    const validChannels = ['toggle-server', 'open-web-ui', 'close-window', 'quit-app'];
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
     }

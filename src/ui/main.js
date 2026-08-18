@@ -7,21 +7,36 @@ import { BdbConnectGateway } from '../server/gateway.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 1. Hide the app completely from the macOS Dock (Pure Menubar App)
-if (app.dock) {
+const isMac = process.platform === 'darwin';
+const isWin = process.platform === 'win32';
+const isLinux = process.platform === 'linux';
+
+// 1. On macOS, hide the app completely from the Dock
+if (isMac && app.dock) {
   app.dock.hide();
 }
 
 let gateway = null;
 
 app.on('ready', () => {
-  const iconPath = path.join(__dirname, 'IconTemplate.png');
-  const icon = nativeImage.createFromPath(iconPath);
-  icon.setTemplateImage(true);
+  // 2. Cross-platform Icon Selection
+  let iconPath;
+  let icon;
+
+  if (isMac) {
+    iconPath = path.join(__dirname, 'IconTemplate.png');
+    icon = nativeImage.createFromPath(iconPath);
+    icon.setTemplateImage(true);
+  } else {
+    // Windows / Linux System Tray
+    iconPath = path.join(__dirname, 'icon.png');
+    icon = nativeImage.createFromPath(iconPath);
+  }
 
   const tray = new Tray(icon);
   tray.setToolTip('BDB CONNECT');
 
+  // 3. Menubar Popover Configuration
   const mb = menubar({
     tray,
     index: `file://${path.join(__dirname, 'index.html')}`,
@@ -43,7 +58,7 @@ app.on('ready', () => {
   });
 
   mb.on('ready', () => {
-    console.log('✅ BDB CONNECT Menubar App is running in macOS Status Bar.');
+    console.log(`✅ BDB CONNECT Menubar App is running on ${process.platform}.`);
   });
 
   ipcMain.on('open-web-ui', (event, targetUrl) => {

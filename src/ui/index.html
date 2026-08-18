@@ -18,59 +18,56 @@
     }
   </style>
 </head>
-<body class="text-white">
-  <!-- We add a slight margin so the shadow isn't clipped by the window edge -->
-  <div class="h-screen w-screen p-2">
-    <div class="bg-gray-900 rounded-xl shadow-2xl border border-gray-700 w-full h-full flex flex-col overflow-hidden">
-      <!-- Header -->
-      <div class="px-4 py-3 border-b border-gray-800 flex justify-between items-center bg-gray-900/50">
-        <div class="flex items-center space-x-2">
-          <div id="status-indicator" class="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
-          <span class="font-semibold text-sm tracking-wider">BDB CONNECT</span>
-        </div>
-        <div class="flex items-center space-x-2 non-draggable">
-          <button id="close-btn" title="Hide window" class="text-gray-400 hover:text-white p-1 rounded hover:bg-gray-800 transition-colors">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-          </button>
-        </div>
+<body class="text-white bg-transparent h-screen w-screen overflow-hidden m-0 p-0">
+  <div class="bg-gray-900 rounded-2xl border border-gray-700/80 shadow-2xl w-full h-full flex flex-col overflow-hidden">
+    <!-- Header -->
+    <div class="px-4 py-3 border-b border-gray-800 flex justify-between items-center bg-gray-900/80">
+      <div class="flex items-center space-x-2">
+        <div id="status-indicator" class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+        <span class="font-semibold text-xs tracking-wider text-gray-200">BDB CONNECT</span>
       </div>
-
-      <!-- Identity Section -->
-      <div class="px-4 py-3 border-b border-gray-800 bg-gray-900/30">
-        <p class="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-semibold">Identity</p>
-        <div class="flex justify-between items-center">
-          <span class="text-sm font-mono text-gray-200">100.123.207.82</span>
-          <span class="text-[10px] bg-gray-800 border border-gray-700 px-2 py-0.5 rounded text-gray-300 font-medium">Tailscale</span>
-        </div>
-      </div>
-
-      <!-- Mode Switch -->
-      <div class="px-4 py-3 border-b border-gray-800 flex justify-between items-center non-draggable hover:bg-gray-800/50 transition-colors">
-        <div class="flex flex-col">
-          <span class="text-sm font-medium text-gray-100">Server Mode</span>
-          <span class="text-xs text-gray-500">Allow inbound agents</span>
-        </div>
-        <button id="toggle-btn" class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900">
-          <span id="toggle-dot" class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1 shadow-sm"></span>
+      <div class="flex items-center space-x-1 non-draggable">
+        <button id="close-btn" title="Hide window" class="text-gray-400 hover:text-white p-1 rounded-md hover:bg-gray-800 focus:outline-none active:outline-none transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
+    </div>
 
-      <!-- Remote Dispatcher -->
-      <div class="px-4 py-3 non-draggable bg-gray-900/30">
-        <p class="text-[10px] text-gray-500 mb-1.5 uppercase tracking-wider font-semibold">Remote Dispatch</p>
-        <input type="text" placeholder="Push task to tailnet..." class="w-full bg-gray-950 border border-gray-800 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-200 placeholder-gray-600 shadow-inner">
+    <!-- Identity Section -->
+    <div class="px-4 py-3 border-b border-gray-800 bg-gray-900/40">
+      <p class="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-semibold">Identity</p>
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-mono text-gray-200">100.123.207.82</span>
+        <span class="text-[10px] bg-gray-800 border border-gray-700 px-2 py-0.5 rounded text-gray-300 font-medium">Tailscale</span>
       </div>
+    </div>
 
-      <!-- Web UI Launcher Section -->
-      <div class="px-4 py-3 border-t border-gray-800/80 non-draggable mt-auto bg-gray-950/40 space-y-2">
-        <button id="open-web-ui-btn" class="w-full py-2 px-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-lg font-medium text-xs flex items-center justify-center gap-2 transition-all shadow-md">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-          <span>Open Agent Workspace Web UI</span>
-        </button>
-        <div class="flex justify-between items-center px-1 text-[11px] text-gray-500">
-          <span>v2.0.0</span>
-          <button id="quit-btn" class="hover:text-red-400 transition-colors font-medium">Quit App</button>
-        </div>
+    <!-- Mode Switch -->
+    <div class="px-4 py-3 border-b border-gray-800 flex justify-between items-center non-draggable hover:bg-gray-800/30 transition-colors">
+      <div class="flex flex-col">
+        <span class="text-xs font-medium text-gray-100">Server Mode</span>
+        <span class="text-[11px] text-gray-500">Allow inbound agents</span>
+      </div>
+      <button id="toggle-btn" class="relative inline-flex h-5 w-10 items-center rounded-full bg-gray-600 transition-colors focus:outline-none">
+        <span id="toggle-dot" class="inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform translate-x-1 shadow-sm"></span>
+      </button>
+    </div>
+
+    <!-- Remote Dispatcher -->
+    <div class="px-4 py-3 non-draggable bg-gray-900/20">
+      <p class="text-[10px] text-gray-500 mb-1.5 uppercase tracking-wider font-semibold">Remote Dispatch</p>
+      <input type="text" placeholder="Push task to tailnet..." class="w-full bg-gray-950 border border-gray-800 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500 text-gray-200 placeholder-gray-600 shadow-inner">
+    </div>
+
+    <!-- Web UI Launcher Section -->
+    <div class="px-4 py-3 border-t border-gray-800/80 non-draggable mt-auto bg-gray-950/40 space-y-2">
+      <button id="open-web-ui-btn" class="w-full py-2 px-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-lg font-medium text-xs flex items-center justify-center gap-2 transition-all shadow-md focus:outline-none">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+        <span>Open Agent Workspace Web UI</span>
+      </button>
+      <div class="flex justify-between items-center px-1 text-[10px] text-gray-500">
+        <span>v2.0.0</span>
+        <button id="quit-btn" class="hover:text-red-400 focus:outline-none transition-colors font-medium">Quit App</button>
       </div>
     </div>
   </div>

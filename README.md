@@ -20,22 +20,69 @@ Work on your powerful stationary workstation directly from your mobile laptop (e
 
 ---
 
-## ⚡ Installation & Updates
+## ⚡ Installation & Downloads
 
-We recommend using the interactive universal installer. It natively supports macOS, Windows, and Linux.
+### 1. Download Native Desktop Apps (BDB CONNECT v1.4.0)
+Download the standalone installer directly for your operating system:
 
-### 1. Via Native App (macOS, Windows, Linux)
-Download the `.dmg`, `.exe` (NSIS), or `.AppImage` directly from the **[GitHub Releases](https://github.com/hybridlabor-api/bdb-os-remote/releases)** page. 
+| Platform | Installer Package | Format | Architecture |
+| :--- | :--- | :--- | :--- |
+| **Windows** | [📥 **BDB CONNECT Setup 1.4.0.exe**](https://github.com/hybridlabor-api/bdb-os-remote/releases/download/v1.4.0/BDB.CONNECT.Setup.1.4.0.exe) | NSIS Executable | x64 |
+| **macOS** | [📥 **BDB CONNECT-1.4.0-arm64.dmg**](https://github.com/hybridlabor-api/bdb-os-remote/releases/download/v1.4.0/BDB.CONNECT-1.4.0-arm64.dmg) | Apple Disk Image | Apple Silicon (M1/M2/M3/M4) |
+| **macOS (Zip)** | [📥 **BDB CONNECT-1.4.0-arm64-mac.zip**](https://github.com/hybridlabor-api/bdb-os-remote/releases/download/v1.4.0/BDB.CONNECT-1.4.0-arm64-mac.zip) | Portable Archive | Apple Silicon |
 
-### 2. Via CLI (Universal & Auto-Shortcut)
-Run the one-click installer wizard on both your Workstation and your Laptop:
+---
+
+### 2. Universal CLI Setup Wizard (One-Click)
+Run this single command on either machine to launch the interactive setup wizard:
 ```bash
 npx @hybridlabor-api/bdb-os-remote@latest installer
 ```
-*(This automatically downloads the latest version, configures the gateway, generates Desktop shortcuts, and launches the BDB CONNECT Menubar App in one go!)*
 
-- **On your Workstation**: Select `[1] Workstation` to start the Gateway.
-- **On your Laptop**: Select `[2] Laptop` to configure your agent automatically (supports AGY, Codex, and Claude).
+---
+
+## 🔄 The 2-Step Connection Workflow
+
+```text
+[Step 1: Workstation (Mac/Linux/PC)] ──────▶ Starts Gateway Daemon (:9080 / :8000)
+                                                    │ (Tailscale WireGuard Mesh)
+[Step 2: Laptop (Client)]            ──────▶ Connects & Injects AGY / Codex / Claude Config
+```
+
+### Step 1: Workstation (Server)
+1. Run the installer and choose `[1] Workstation (Server Mode)` or launch the **BDB CONNECT** Menubar App.
+2. Start the SSE gateway daemon (e.g. on port `9080`):
+   ```bash
+   npx @hybridlabor-api/bdb-os-remote@latest server --port 9080 --workspace "/Users/timrennings/bdb-dev"
+   ```
+
+### Step 2: Laptop (Client)
+1. Run the installer on your laptop and choose `[2] Laptop (Client Mode)`.
+2. Enter your Workstation's Tailscale IP (e.g. `100.123.207.82`) and Port (`9080`).
+3. Select your AI Agent Harness (**Antigravity (AGY)**, **Codex / OpenCode**, or **Claude Desktop**).
+4. Verify the tunnel health:
+   ```bash
+   npx @hybridlabor-api/bdb-os-remote@latest status --host 100.123.207.82 --port 9080
+   ```
+
+---
+
+## 🛠️ Troubleshooting & FAQ
+
+### `ECONNREFUSED 100.x.x.x:<port>`
+- **Cause**: The Gateway server is not running on the Workstation, or the port numbers do not match.
+- **Fix**: Verify on the Workstation that `npx @hybridlabor-api/bdb-os-remote server --port <port>` is active and listening.
+
+### `Windows SSH: Connection refused`
+- **Cause**: OpenSSH Server is not installed or the `sshd` service is stopped on Windows.
+- **Fix**: Run `npx @hybridlabor-api/bdb-os-remote@latest installer` on Windows. The installer automatically detects missing SSH, prompts for permission, and installs/starts OpenSSH with administrator elevation.
+
+### Verify Tailscale Mesh
+- Ensure both devices are on the same Tailscale tailnet:
+  ```bash
+  tailscale status
+  tailscale ping 100.123.207.82
+  ```
 
 ---
 

@@ -806,14 +806,36 @@
         <span class="lang-en">The universal, agent-driven remote infrastructure for macOS, Windows, and Linux. Featuring Zero-Trust Security, a native menubar app, and seamless multi-agent integration.</span>
       </p>
 
+      <section class="doc-section" id="downloads">
+        <h2 class="section-heading">
+          <span class="lang-de">Native Desktop-Apps (Downloads v1.4.0)</span>
+          <span class="lang-en">Native Desktop Apps (Downloads v1.4.0)</span>
+        </h2>
+        <p>
+          <span class="lang-de">Laden Sie die Standalone BDB CONNECT Menubar App direkt herunter:</span>
+          <span class="lang-en">Download the standalone BDB CONNECT menubar app directly:</span>
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; margin-bottom: 1.5rem;">
+          <a href="https://github.com/hybridlabor-api/bdb-os-remote/releases/download/v1.4.0/BDB.CONNECT.Setup.1.4.0.exe" class="badge badge-accent" style="padding: 0.6rem 1.2rem; font-size: 0.9rem; text-decoration: none;">
+            🪟 Windows (.exe) Installer
+          </a>
+          <a href="https://github.com/hybridlabor-api/bdb-os-remote/releases/download/v1.4.0/BDB.CONNECT-1.4.0-arm64.dmg" class="badge badge-accent" style="padding: 0.6rem 1.2rem; font-size: 0.9rem; text-decoration: none;">
+            🍏 macOS (.dmg) Apple Silicon
+          </a>
+          <a href="https://github.com/hybridlabor-api/bdb-os-remote/releases/download/v1.4.0/BDB.CONNECT-1.4.0-arm64-mac.zip" class="badge badge-subtle" style="padding: 0.6rem 1.2rem; font-size: 0.9rem; text-decoration: none;">
+            📦 macOS Portable (.zip)
+          </a>
+        </div>
+      </section>
+
       <section class="doc-section" id="installation">
         <h2 class="section-heading">
           <span class="lang-de">Installation (Universal Installer)</span>
           <span class="lang-en">Installation (Universal Installer)</span>
         </h2>
         <p>
-          <span class="lang-de">Nutzen Sie den neuen universellen Installer für eine vollautomatische Einrichtung.</span>
-          <span class="lang-en">Use the new universal installer for a fully automated setup.</span>
+          <span class="lang-de">Führen Sie auf beiden Rechnern diesen einzigen Befehl aus. Er führt den interaktiven Wizard aus, erstellt Desktop-Shortcuts und konfiguriert die Agent-MCPs:</span>
+          <span class="lang-en">Run this single command on both machines. It runs the interactive wizard, creates desktop shortcuts, and configures the agent MCPs:</span>
         </p>
         <div class="code-block">
           <div class="code-header">
@@ -823,6 +845,27 @@
             <span class="prompt-sym">$</span>npx @hybridlabor-api/bdb-os-remote@latest installer
           </div>
         </div>
+      </section>
+
+      <section class="doc-section" id="troubleshooting">
+        <h2 class="section-heading">
+          <span class="lang-de">Troubleshooting & Fehlerbehebung</span>
+          <span class="lang-en">Troubleshooting & FAQ</span>
+        </h2>
+        <ul class="docs-steps" style="margin-top: 1rem;">
+          <li class="docs-step">
+            <span class="lang-de"><strong>ECONNREFUSED:</strong> Stellen Sie sicher, dass auf der Workstation das Server-Gateway aktiv läuft (z.B. via <code>npx @hybridlabor-api/bdb-os-remote server --port 9080</code>).</span>
+            <span class="lang-en"><strong>ECONNREFUSED:</strong> Ensure that the server gateway daemon is actively running on the workstation (e.g. via <code>npx @hybridlabor-api/bdb-os-remote server --port 9080</code>).</span>
+          </li>
+          <li class="docs-step">
+            <span class="lang-de"><strong>Windows SSH Server:</strong> Führen Sie den Installer aus und bestätigen Sie die automatische UAC-Installation, um OpenSSH auf Port 22 freizuschalten.</span>
+            <span class="lang-en"><strong>Windows SSH Server:</strong> Run the installer and accept the automated UAC prompt to install and configure OpenSSH on port 22.</span>
+          </li>
+          <li class="docs-step">
+            <span class="lang-de"><strong>Verbindungstest:</strong> Prüfen Sie die Verbindung jederzeit mit <code>npx @hybridlabor-api/bdb-os-remote status --host &lt;TAILSCALE_IP&gt; --port &lt;PORT&gt;</code>.</span>
+            <span class="lang-en"><strong>Connection Test:</strong> Test connectivity at any time with <code>npx @hybridlabor-api/bdb-os-remote status --host &lt;TAILSCALE_IP&gt; --port &lt;PORT&gt;</code>.</span>
+          </li>
+        </ul>
       </section>
 
       <section class="doc-section" id="bdb-connect">

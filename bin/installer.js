@@ -165,7 +165,7 @@ async function runWizard() {
     console.log(`📄 Guide generated: ${guidePath}`);
     console.log(`\nTo start the gateway on this workstation:`);
     console.log(`   • Via Menubar App: Launch 'BDB CONNECT' from Applications`);
-    console.log(`   • Via CLI: npx @hybridlabor-api/bdb-os-remote server --port ${port} --workspace "${workspace}"\n`);
+    console.log(`   • Via CLI: npx -y --package=@hybridlabor-api/bdb-os-remote bdb-remote server --port ${port} --workspace "${workspace}"\n`);
 
   } else if (choice.trim() === "2") {
     console.log("\n--- Configuring Laptop (Client Mode) ---");
@@ -182,7 +182,7 @@ async function runWizard() {
 
     const mcpConfig = {
       command: "npx",
-      args: ["-y", "@hybridlabor-api/bdb-os-remote", "client", "--host", host, "--port", port]
+      args: ["-y", "--package=@hybridlabor-api/bdb-os-remote", "bdb-remote", "client", "--host", host, "--port", port]
     };
 
     console.log("\nInjecting MCP Configurations...");

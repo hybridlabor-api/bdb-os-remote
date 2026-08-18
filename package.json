@@ -18,6 +18,7 @@
     "build": "electron-builder"
   },
   "build": {
+    "productName": "BDB CONNECT",
     "appId": "com.hybridlabor.bdb-os-remote",
     "mac": {
       "target": "dir"

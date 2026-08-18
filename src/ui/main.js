@@ -1,4 +1,4 @@
-import { app, ipcMain, Tray, nativeImage } from 'electron';
+import { app, ipcMain, shell, Tray, nativeImage } from 'electron';
 import { menubar } from 'menubar';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -27,7 +27,7 @@ app.on('ready', () => {
     index: `file://${path.join(__dirname, 'index.html')}`,
     browserWindow: {
       width: 320,
-      height: 400,
+      height: 440,
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
@@ -44,6 +44,11 @@ app.on('ready', () => {
 
   mb.on('ready', () => {
     console.log('✅ BDB CONNECT Menubar App is running in macOS Status Bar.');
+  });
+
+  ipcMain.on('open-web-ui', (event, targetUrl) => {
+    const url = targetUrl || 'http://127.0.0.1:8000';
+    shell.openExternal(url);
   });
 
   ipcMain.on('toggle-server', async (event, state) => {

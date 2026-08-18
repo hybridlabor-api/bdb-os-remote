@@ -163,8 +163,9 @@ async function runWizard() {
 
     console.log(`\n✅ Workstation Configuration Complete!`);
     console.log(`📄 Guide generated: ${guidePath}`);
-    console.log(`\nTo start the gateway on this workstation, run:`);
-    console.log(`   npx @hybridlabor-api/bdb-os-remote server --port ${port} --workspace "${workspace}"\n`);
+    console.log(`\nTo start the gateway on this workstation:`);
+    console.log(`   • Via Menubar App: Launch 'BDB CONNECT' from Applications`);
+    console.log(`   • Via CLI: npx @hybridlabor-api/bdb-os-remote server --port ${port} --workspace "${workspace}"\n`);
 
   } else if (choice.trim() === "2") {
     console.log("\n--- Configuring Laptop (Client Mode) ---");

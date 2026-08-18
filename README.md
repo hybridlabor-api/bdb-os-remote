@@ -11,10 +11,13 @@
 
 [![npm version](https://img.shields.io/npm/v/@hybridlabor-api/bdb-os-remote.svg?style=flat-square)](https://www.npmjs.com/package/@hybridlabor-api/bdb-os-remote)
 [![CI](https://github.com/hybridlabor-api/bdb-os-remote/actions/workflows/ci.yml/badge.svg)](https://github.com/hybridlabor-api/bdb-os-remote/actions/workflows/ci.yml)
+[![Documentation](https://img.shields.io/badge/Docs-Live%20Manual-blue?style=flat-square&logo=github)](https://hybridlabor-api.github.io/bdb-os-remote/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Tailscale](https://img.shields.io/badge/Tailscale-Zero--Trust-black?logo=tailscale)](https://tailscale.com/)
 
 > **Zero-Trust SSE Gateway & Mobile Thin-Client Bridge** for Claude Desktop, Claude Code, and AI Agents over Tailscale.
+> 
+> 🌐 **Live User Manual & Interactive Guide:** [https://hybridlabor-api.github.io/bdb-os-remote/](https://hybridlabor-api.github.io/bdb-os-remote/)
 
 Work on your powerful stationary workstation directly from your mobile laptop (e.g., on an ICE train or in a café) with **zero perceived latency**, **under 5 KB/s bandwidth**, and **full access to all workstation compute, 152 BDB skills, and the memB vector memory engine**.
 

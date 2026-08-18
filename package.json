@@ -29,7 +29,10 @@
     "productName": "BDB CONNECT",
     "appId": "com.hybridlabor.bdb-os-remote",
     "mac": {
-      "target": ["dmg", "zip"]
+      "target": [
+        "dmg",
+        "zip"
+      ]
     },
     "win": {
       "target": "nsis",
@@ -38,7 +41,8 @@
     "linux": {
       "target": "AppImage",
       "icon": "src/ui/icon.png"
-    }
+    },
+    "executableName": "bdb-os-remote"
   },
   "keywords": [
     "bdb",

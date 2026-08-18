@@ -114,8 +114,12 @@ graph TD
 - **No Open Ports**: Zero public port forwardings needed; protected by WireGuard encryption.
 - **Node.js**: Requires Node.js >= 18.0.0.
 
-## 📖 Documentation
-Detailed technical documentation and architecture decisions are available in [.openwiki/quickstart.md](.openwiki/quickstart.md).
+## 📖 User Manual & Documentation
+
+- 🇩🇪 / 🇬🇧 **[Bilingual Interactive Web Manual](docs/manual/index.html)** – Full step-by-step illustrated manual with instant DE/EN toggle, live search, and pre-flight checklist.
+- 🇩🇪 **[Deutsches Benutzerhandbuch (Markdown)](docs/BDB_OS_Remote_Benutzerhandbuch.md)** – Das vollständige deutsche Referenzhandbuch im Markdown-Format.
+- 🌐 **[Standalone HTML Manual](docs/BDB_OS_Remote_Benutzerhandbuch.html)** – Offline-fähige Standalone-HTML-Version.
+- 📚 **[Technical OpenWiki Architecture](.openwiki/quickstart.md)** – Detailed developer guides and internal module specifications.
 
 ## 📄 License
 MIT © BDB Dev Team

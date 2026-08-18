@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BDB OS Remote – Benutzerhandbuch / User Manual</title>
+  <meta name="description" content="Offizielles Benutzerhandbuch für BDB OS Remote v1.1.0 - Von unterwegs arbeiten, als säßest du zuhause am Computer. / Official User Manual for BDB OS Remote." />
+  <style>
+    :root {
+      --bg-primary: #0b0f17;
+      --bg-secondary: #111827;
+      --bg-surface: #1e293b;
+      --bg-card: rgba(17, 24, 39, 0.85);
+      --bg-card-hover: rgba(30, 41, 59, 0.7);
+      --border-subtle: #1e293b;
+      --border-strong: #334155;
+      --border-focus: #6366f1;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-primary: #6366f1;
+      --accent-secondary: #06b6d4;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.2);
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --sidebar-width: 280px;
+      --header-height: 64px;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-surface: #f1f5f9;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-card-hover: #f8fafc;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --border-focus: #4f46e5;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --accent-primary: #4f46e5;
+      --accent-secondary: #0284c7;
+      --accent-glow: rgba(79, 70, 229, 0.12);
+      --success: #059669;
+      --success-glow: rgba(5, 150, 105, 0.15);
+      --warning: #d97706;
+      --danger: #dc2626;
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.65;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* Reading Progress Bar */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      width: 0%;
+      z-index: 100;
+      transition: width 0.1s ease;
+    }
+
+    /* Top Navigation Header */
+    header {
+      position: sticky;
+      top: 0;
+      height: var(--header-height);
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-badge {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: #ffffff;
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Search Bar */
+    .search-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 0.45rem 2rem 0.45rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      width: 180px;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      width: 240px;
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .search-shortcut {
+      position: absolute;
+      right: 0.5rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-strong);
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    /* Language Switcher */
+    .lang-switcher {
+      display: flex;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+
+    .lang-btn.active {
+      background: var(--accent-primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Theme Switcher */
+    .theme-toggle {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .theme-toggle:hover {
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* Main Container Layout */
+    .app-container {
+      display: flex;
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Sidebar Navigation */
+    aside.sidebar {
+      width: var(--sidebar-width);
+      position: sticky;
+      top: var(--header-height);
+      height: calc(100vh - var(--header-height));
+      overflow-y: auto;
+      padding: 1.5rem 1rem;
+      border-right: 1px solid var(--border-subtle);
+      background: var(--bg-primary);
+      flex-shrink: 0;
+    }
+
+    .nav-group-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-left: 0.5rem;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      border-left: 2px solid transparent;
+    }
+
+    .nav-item a:hover {
+      color: var(--text-primary);
+      background: var(--bg-surface);
+    }
+
+    .nav-item a.active {
+      color: var(--accent-primary);
+      background: var(--accent-glow);
+      border-left-color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 0.7rem;
+      padding: 0.1rem 0.4rem;
+      background: var(--bg-surface);
+      border-radius: 4px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Main Content Area */
+    main.content-area {
+      flex: 1;
+      padding: 2.5rem 3.5rem 6rem;
+      max-width: 900px;
+      overflow-x: hidden;
+    }
+
+    /* Hero Section */
+    .hero {
+      margin-bottom: 3.5rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .hero-pre {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .meta-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .meta-card-icon {
+      font-size: 1.5rem;
+    }
+
+    .meta-card-text div:first-child {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .meta-card-text div:last-child {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Content Sections */
+    section.manual-section {
+      margin-bottom: 4rem;
+      scroll-margin-top: calc(var(--header-height) + 1.5rem);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--accent-glow);
+      color: var(--accent-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    p {
+      color: var(--text-secondary);
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Key Benefits Grid */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .benefit-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .benefit-card:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+    }
+
+    .benefit-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Callout Boxes */
+    .callout {
+      border-radius: var(--radius-md);
+      padding: 1.15rem 1.25rem;
+      margin: 1.5rem 0;
+      display: flex;
+      gap: 0.85rem;
+      font-size: 0.95rem;
+    }
+
+    .callout-info {
+      background: var(--accent-glow);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: var(--text-primary);
+    }
+
+    .callout-warning {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: var(--text-primary);
+    }
+
+    .callout-success {
+      background: var(--success-glow);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--text-primary);
+    }
+
+    .callout-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    /* Interactive Checklist */
+    .checklist-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .checklist-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .checklist-progress-text {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      font-family: var(--font-mono);
+    }
+
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checklist-item input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-strong);
+      border-radius: 6px;
+      background: var(--bg-surface);
+      cursor: pointer;
+      margin-top: 2px;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.15s ease;
+    }
+
+    .checklist-item input[type="checkbox"]:checked {
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .checklist-item input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .checklist-text {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.45;
+      transition: color 0.15s ease;
+    }
+
+    .checklist-item input[type="checkbox"]:checked ~ .checklist-text {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    /* Terminal & Code Blocks */
+    .terminal-window {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin: 1.5rem 0;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .terminal-titlebar {
+      background: #161b22;
+      padding: 0.5rem 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #30363d;
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+
+    .terminal-title {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: #8b949e;
+    }
+
+    .copy-btn {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: #30363d;
+      color: #ffffff;
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .terminal-body {
+      padding: 1rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: #c9d1d9;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    .cmd-prompt {
+      color: #58a6ff;
+      user-select: none;
+      margin-right: 0.5rem;
+    }
+
+    .cmd-text {
+      color: #7ee787;
+      font-weight: 600;
+    }
+
+    /* Steps List */
+    .step-list {
+      list-style: none;
+      counter-reset: step-counter;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .step-item {
+      position: relative;
+      padding-left: 2.75rem;
+      counter-increment: step-counter;
+    }
+
+    .step-item::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 2px solid var(--accent-primary);
+      color: var(--accent-primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+    }
+
+    /* Comparison Table */
+    .table-container {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.925rem;
+    }
+
+    th, td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    th {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Interactive Visual Diagram Cards */
+    .visual-diagram-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin: 2rem 0;
+      box-shadow: var(--shadow-md);
+    }
+
+    .diagram-caption {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 0.85rem;
+      letter-spacing: 0.02em;
+    }
+
+    /* Troubleshooting Accordions */
+    .troubleshoot-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .accordion-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .accordion-item:hover {
+      border-color: var(--border-strong);
+    }
+
+    .accordion-header {
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-primary);
+      user-select: none;
+    }
+
+    .accordion-header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .status-badge-err {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.15);
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    .accordion-chevron {
+      transition: transform 0.2s ease;
+      color: var(--text-muted);
+    }
+
+    .accordion-item.open .accordion-chevron {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      display: none;
+      padding: 0 1.25rem 1.25rem;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.925rem;
+    }
+
+    .accordion-item.open .accordion-content {
+      display: block;
+      padding-top: 1rem;
+    }
+
+    /* FAQ List */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .faq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+    }
+
+    .faq-q {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .faq-a {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    /* Glossary Cards */
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .glossary-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.15rem;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .glossary-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-primary);
+    }
+
+    .glossary-term {
+      font-weight: 700;
+      color: var(--accent-primary);
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .glossary-def {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      background: var(--bg-primary);
+      margin-top: auto;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-primary);
+    }
+
+    /* Language Switch Visibility */
+    [lang="de"] .lang-en { display: none !important; }
+    [lang="en"] .lang-de { display: none !important; }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 992px) {
+      aside.sidebar {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: var(--header-height);
+        width: 280px;
+        z-index: 90;
+        background: var(--bg-secondary);
+        box-shadow: var(--shadow-lg);
+      }
+      aside.sidebar.mobile-open {
+        display: block;
+      }
+      .mobile-menu-btn {
+        display: flex;
+      }
+      main.content-area {
+        padding: 2rem 1.5rem 4rem;
+      }
+      .benefits-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .search-input {
+        width: 120px;
+      }
+      .search-input:focus {
+        width: 160px;
+      }
+      .header-controls {
+        gap: 0.4rem;
+      }
+      .lang-btn {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.75rem;
+      }
+    }
+
+    /* Print Styles */
+    @media print {
+      header, aside.sidebar, #progress-bar, .search-container, .header-controls, .copy-btn {
+        display: none !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      main.content-area {
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+      .manual-section {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-bar"></div>
+
+  <!-- Header -->
+  <header>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <button class="mobile-menu-btn" id="menuToggle" aria-label="Menu">☰</button>
+      <a href="#" class="brand">
+        <span>⚡ BDB OS Remote</span>
+        <span class="brand-badge">v1.1.0</span>
+      </a>
+    </div>
+
+    <div class="header-controls">
+      <div class="search-container">
+        <input type="text" id="globalSearch" class="search-input" placeholder="Suchen / Search..." />
+        <span class="search-shortcut">/</span>
+      </div>
+
+      <div class="lang-switcher">
+        <button class="lang-btn active" id="btnLangDe" onclick="setLanguage('de')">🇩🇪 DE</button>
+        <button class="lang-btn" id="btnLangEn" onclick="setLanguage('en')">🇬🇧 EN</button>
+      </div>
+
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Theme Switcher">
+        🌙
+      </button>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebarNav">
+      <div class="nav-group-title">
+        <span class="lang-de">📑 Inhaltsverzeichnis</span>
+        <span class="lang-en">📑 Table of Contents</span>
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item"><a href="#1-einfuehrung"><span class="nav-badge">01</span><span class="lang-de">Einführung</span><span class="lang-en">Introduction</span></a></li>
+        <li class="nav-item"><a href="#2-voraussetzungen"><span class="nav-badge">02</span><span class="lang-de">Voraussetzungen</span><span class="lang-en">Prerequisites</span></a></li>
+        <li class="nav-item"><a href="#3-schritt-1"><span class="nav-badge">03</span><span class="lang-de">Schritt 1: Arbeits-PC</span><span class="lang-en">Step 1: Workstation</span></a></li>
+        <li class="nav-item"><a href="#4-schritt-2"><span class="nav-badge">04</span><span class="lang-de">Schritt 2: Laptop</span><span class="lang-en">Step 2: Laptop</span></a></li>
+        <li class="nav-item"><a href="#5-verbindungsart"><span class="nav-badge">05</span><span class="lang-de">Verbindungsart</span><span class="lang-en">Connection Mode</span></a></li>
+        <li class="nav-item"><a href="#6-loslegen"><span class="nav-badge">06</span><span class="lang-de">Loslegen im Chat</span><span class="lang-en">Getting Started</span></a></li>
+        <li class="nav-item"><a href="#7-offline-modus"><span class="nav-badge">07</span><span class="lang-de">Offline-Modus</span><span class="lang-en">Offline Mode</span></a></li>
+        <li class="nav-item"><a href="#8-update"><span class="nav-badge">08</span><span class="lang-de">Software Update</span><span class="lang-en">Software Update</span></a></li>
+        <li class="nav-item"><a href="#9-fehlerbehebung"><span class="nav-badge">09</span><span class="lang-de">Fehlerbehebung</span><span class="lang-en">Troubleshooting</span></a></li>
+        <li class="nav-item"><a href="#10-faq"><span class="nav-badge">10</span><span class="lang-de">Häufige Fragen (FAQ)</span><span class="lang-en">FAQ</span></a></li>
+        <li class="nav-item"><a href="#11-woerterbuch"><span class="nav-badge">11</span><span class="lang-de">Wörterbuch</span><span class="lang-en">Glossary</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content-area" id="mainContent">
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-pre">
+          <span>🌐 Hybridlabor Architecture</span> &bull; <span>BDB Remote Ecosystem</span>
+        </div>
+        <h1 class="lang-de">BDB OS Remote – Benutzerhandbuch</h1>
+        <h1 class="lang-en">BDB OS Remote – User Manual</h1>
+        <p class="hero-subtitle lang-de">Von unterwegs arbeiten, als säßest du zuhause am Computer.</p>
+        <p class="hero-subtitle lang-en">Work from anywhere as if you were sitting right at your home computer.</p>
+
+        <div class="hero-meta-grid">
+          <div class="meta-card">
+            <div class="meta-card-icon">🔒</div>
+            <div class="meta-card-text">
+              <div class="lang-de">Sicherheit</div>
+              <div class="lang-en">Security</div>
+              <div>Tailscale VPN</div>
+            </div>
+          </div>
+          <div class="meta-card">
+            <div class="meta-card-icon">📶</div>
+            <div class="meta-card-text">
+              <div class="lang-de">Bandbreite</div>
+              <div class="lang-en">Bandwidth</div>
+              <div>Heimdall Token Saver</div>
+            </div>
+          </div>
+          <div class="meta-card">
+            <div class="meta-card-icon">📦</div>
+            <div class="meta-card-text">
+              <div class="lang-de">Offline-Fähig</div>
+              <div class="lang-en">Offline Ready</div>
+              <div>BDB Pull Engine</div>
+            </div>
+          </div>
+          <div class="meta-card">
+            <div class="meta-card-icon">⚡</div>
+            <div class="meta-card-text">
+              <div class="lang-de">Version</div>
+              <div class="lang-en">Version</div>
+              <div>1.1.0 Production</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 1 -->
+      <section id="1-einfuehrung" class="manual-section">
+        <div class="section-header">
+          <div class="section-num">01</div>
+          <h2 class="section-title lang-de">1. Einführung – Was macht diese Software eigentlich?</h2>
+          <h2 class="section-title lang-en">1. Introduction – What does this software actually do?</h2>
+        </div>
+
+        <p class="lang-de">
+          Stell dir vor, du hast zuhause einen sehr leistungsstarken Computer stehen, auf dem all deine Projekte, Dateien und dein digitaler Assistent ("Claude Desktop") liegen. Wenn du unterwegs bist – zum Beispiel im Zug oder im Café – möchtest du trotzdem so arbeiten können, als würdest du direkt vor diesem Computer sitzen.
+        </p>
+        <p class="lang-en">
+          Imagine you have a very powerful computer at home where all your projects, files, and your digital AI assistant ("Claude Desktop") reside. When you are on the go – for instance on a train or in a café – you still want to work exactly as if you were sitting right in front of that powerful workstation.
+        </p>
+
+        <p class="lang-de">
+          <strong>Genau das macht BDB OS Remote.</strong> Es baut eine sichere, unsichtbare Verbindung zwischen deinem Laptop und deinem Zuhause-Computer auf. Du tippst auf deinem Laptop, aber die eigentliche Arbeit (das Denken, das Suchen in Dateien, das Ausführen von Aufgaben) passiert auf deinem starken Zuhause-Computer.
+        </p>
+        <p class="lang-en">
+          <strong>This is exactly what BDB OS Remote does.</strong> It establishes a secure, invisible connection between your travel laptop and your home workstation. You type on your laptop, but the heavy lifting (computations, file searches, tool executions) runs directly on your powerful home computer.
+        </p>
+
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <div class="benefit-header">
+              <span>🔒</span>
+              <span class="lang-de">100% Sicher</span>
+              <span class="lang-en">100% Secure</span>
+            </div>
+            <p class="lang-de">Die Verbindung läuft über ein privates, verschlüsseltes Netzwerk namens <strong>Tailscale</strong>. Niemand sonst kann mitlesen, und du musst keine unsicheren Ports am Router öffnen.</p>
+            <p class="lang-en">The connection runs over a private, end-to-end encrypted network via <strong>Tailscale</strong>. Nobody can eavesdrop, and you don't have to expose any router ports.</p>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-header">
+              <span>📶</span>
+              <span class="lang-de">Extrem Sparsam</span>
+              <span class="lang-en">Low Bandwidth</span>
+            </div>
+            <p class="lang-de">Selbst bei schlechtem Handy-Empfang (z. B. im ICE) bleibt die Verbindung stabil, da nur winzige, token-optimierte Datenpakete übertragen werden.</p>
+            <p class="lang-en">Even with weak mobile signal (e.g. in high-speed trains), the connection stays responsive because only minimal, token-compressed payloads are transmitted.</p>
+          </div>
+        </div>
+
+        <!-- SVG Architecture Diagram replacing Screenshot 1 -->
+        <div class="visual-diagram-card">
+          <svg viewBox="0 0 760 220" width="100%" height="auto" style="display: block; max-height: 220px;">
+            <defs>
+              <linearGradient id="gradLap" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="100%" stop-color="#1d4ed8" />
+              </linearGradient>
+              <linearGradient id="gradWork" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#8b5cf6" />
+                <stop offset="100%" stop-color="#6366f1" />
+              </linearGradient>
+              <linearGradient id="tunnelGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.8" />
+                <stop offset="50%" stop-color="#10b981" stop-opacity="0.9" />
+                <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.8" />
+              </linearGradient>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+
+            <!-- Laptop Node (Left) -->
+            <rect x="30" y="35" width="180" height="135" rx="12" fill="url(#gradLap)" opacity="0.15" stroke="#3b82f6" stroke-width="2" />
+            <rect x="45" y="50" width="150" height="75" rx="6" fill="#0f172a" stroke="#3b82f6" stroke-width="1" />
+            <text x="120" y="85" fill="#93c5fd" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">💻 Laptop (Client)</text>
+            <text x="120" y="105" fill="#60a5fa" font-family="monospace" font-size="10" text-anchor="middle">Claude Desktop</text>
+            <rect x="70" y="135" width="100" height="8" rx="4" fill="#3b82f6" />
+            <text x="120" y="160" fill="#94a3b8" font-family="sans-serif" font-size="10" text-anchor="middle">Unterwegs / On the Go</text>
+
+            <!-- Encrypted Tunnel (Center) -->
+            <line x1="210" y1="100" x2="550" y2="100" stroke="url(#tunnelGrad)" stroke-width="4" stroke-dasharray="6 4" filter="url(#glow)" />
+            <circle cx="380" cy="100" r="26" fill="#0b0f17" stroke="#10b981" stroke-width="2" />
+            <text x="380" y="97" fill="#10b981" font-size="16" text-anchor="middle">🔒</text>
+            <text x="380" y="116" fill="#10b981" font-family="sans-serif" font-size="8" font-weight="bold" text-anchor="middle">TAILSCALE</text>
+            <text x="380" y="145" fill="#10b981" font-family="monospace" font-size="9" text-anchor="middle">End-to-End Encrypted WireGuard</text>
+
+            <!-- Workstation Node (Right) -->
+            <rect x="550" y="35" width="180" height="135" rx="12" fill="url(#gradWork)" opacity="0.15" stroke="#8b5cf6" stroke-width="2" />
+            <rect x="565" y="50" width="150" height="75" rx="6" fill="#0f172a" stroke="#8b5cf6" stroke-width="1" />
+            <text x="640" y="85" fill="#c4b5fd" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">🖥️ Workstation (Host)</text>
+            <text x="640" y="105" fill="#a78bfa" font-family="monospace" font-size="10" text-anchor="middle">BDB OS Gateway</text>
+            <rect x="590" y="135" width="100" height="8" rx="4" fill="#8b5cf6" />
+            <text x="640" y="160" fill="#94a3b8" font-family="sans-serif" font-size="10" text-anchor="middle">Zuhause / Office Workstation</text>
+          </svg>
+          <div class="diagram-caption lang-de">Systemübersicht: Verschlüsselter BDB OS Remote Tunnel via Tailscale</div>
+          <div class="diagram-caption lang-en">Architecture Overview: Encrypted BDB OS Remote Tunnel via Tailscale</div>
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section id="2-voraussetzungen" class="manual-section">
+        <div class="section-header">
+          <div class="section-num">02</div>
+          <h2 class="section-title lang-de">2. Was du vorher brauchst (Voraussetzungen)</h2>
+          <h2 class="section-title lang-en">2. What You Need First (Prerequisites)</h2>
+        </div>
+
+        <p class="lang-de">Bevor du startest, prüfe bitte, ob folgende Dinge vorhanden und eingerichtet sind:</p>
+        <p class="lang-en">Before getting started, please ensure you have the following prerequisites in place:</p>
+
+        <div class="checklist-wrapper">
+          <div class="checklist-header">
+            <strong><span class="lang-de">Pre-Flight Checkliste</span><span class="lang-en">Pre-Flight Checklist</span></strong>
+            <span class="checklist-progress-text" id="checkCount">0/5 Erledigt</span>
+          </div>
+          <ul class="checklist">
+            <li class="checklist-item">
+              <input type="checkbox" id="c1" onchange="updateChecklist()" />
+              <label for="c1" class="checklist-text lang-de"><strong>Zwei Geräte:</strong> Einen leistungsstarken Computer zuhause ("Arbeits-Computer") und einen Laptop für unterwegs.</label>
+              <label for="c1" class="checklist-text lang-en"><strong>Two Devices:</strong> A powerful computer at home ("Workstation") and a laptop to take on the go.</label>
+            </li>
+            <li class="checklist-item">
+              <input type="checkbox" id="c2" onchange="updateChecklist()" />
+              <label for="c2" class="checklist-text lang-de"><strong>Tailscale-Konto:</strong> Kostenlos registriert unter <a href="https://tailscale.com" target="_blank" style="color: var(--accent-primary);">tailscale.com</a> und auf beiden Geräten installiert.</label>
+              <label for="c2" class="checklist-text lang-en"><strong>Tailscale Account:</strong> Free setup at <a href="https://tailscale.com" target="_blank" style="color: var(--accent-primary);">tailscale.com</a> and installed on both machines.</label>
+            </li>
+            <li class="checklist-item">
+              <input type="checkbox" id="c3" onchange="updateChecklist()" />
+              <label for="c3" class="checklist-text lang-de"><strong>Claude Desktop:</strong> Auf beiden Geräten fertig installiert.</label>
+              <label for="c3" class="checklist-text lang-en"><strong>Claude Desktop:</strong> Installed on both workstation and laptop.</label>
+            </li>
+            <li class="checklist-item">
+              <input type="checkbox" id="c4" onchange="updateChecklist()" />
+              <label for="c4" class="checklist-text lang-de"><strong>Node.js:</strong> Auf beiden Geräten installiert (damit <code>npx</code> Befehle ausgeführt werden können).</label>
+              <label for="c4" class="checklist-text lang-en"><strong>Node.js:</strong> Installed on both devices (required to run <code>npx</code> commands).</label>
+            </li>
+            <li class="checklist-item">
+              <input type="checkbox" id="c5" onchange="updateChecklist()" />
+              <label for="c5" class="checklist-text lang-de"><strong>Gleicher Login:</strong> Beide Geräte sind mit demselben Tailscale-Konto angemeldet.</label>
+              <label for="c5" class="checklist-text lang-en"><strong>Same Tailnet:</strong> Both machines are logged into the identical Tailscale account.</label>
+            </li>
+          </ul>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">💡</div>
+          <div>
+            <span class="lang-de"><strong>Tipp:</strong> Diese Einrichtung machst du nur <strong>ein einziges Mal</strong>. Danach reicht ein Klick, um von überall auf der Welt zu arbeiten.</span>
+            <span class="lang-en"><strong>Tip:</strong> You only need to perform this setup <strong>once</strong>. Afterwards, you can work remotely with zero friction.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section id="3-schritt-1" class="manual-section">
+        <div class="section-header">
+          <div class="section-num">03</div>
+          <h2 class="section-title lang-de">3. Schritt 1: Deinen Arbeits-Computer einrichten</h2>
+          <h2 class="section-title lang-en">3. Step 1: Set Up Your Workstation</h2>
+        </div>
+
+        <p class="lang-de">Diese Einrichtung führst du auf dem Computer durch, der <strong>zuhause / im Büro stehen bleibt</strong>:</p>
+        <p class="lang-en">Perform these steps on the primary computer that <strong>stays at home / in the studio</strong>:</p>
+
+        <ol class="step-list">
+          <li class="step-item">
+            <span class="lang-de">Öffne das <strong>Terminal</strong> (Auf dem Mac: Spotlight Suche &rarr; "Terminal").</span>
+            <span class="lang-en">Open the <strong>Terminal</strong> (On macOS: Spotlight Search &rarr; "Terminal").</span>
+          </li>
+          <li class="step-item">
+            <span class="lang-de">Kopiere folgenden Befehl, füge ihn ein und drücke Enter:</span>
+            <span class="lang-en">Copy and paste the following command and hit Enter:</span>
+            <div class="terminal-window">
+              <div class="terminal-titlebar">
+                <div class="terminal-dots">
+                  <span class="terminal-dot dot-red"></span>
+                  <span class="terminal-dot dot-yellow"></span>
+                  <span class="terminal-dot dot-green"></span>
+                </div>
+                <span class="terminal-title">bash &bull; Workstation Setup</span>
+                <button class="copy-btn" onclick="copyCode(this, 'npx @hybridlabor-api/bdb-os-remote@latest installer')">
+                  <span>📋 Copy</span>
+                </button>
+              </div>
+              <div class="terminal-body">
+                <span class="cmd-prompt">$</span><span class="cmd-text">npx @hybridlabor-api/bdb-os-remote@latest installer</span>
+              </div>
+            </div>
+          </li>
+          <li class="step-item">
+            <span class="lang-de">Warte kurz, bis das interaktive Menü erscheint.</span>
+            <span class="lang-en">Wait for the interactive installer menu to appear.</span>
+          </li>
+          <li class="step-item">
+            <span class="lang-de">Wähle die Option <strong>[1] Workstation</strong> (tippe <code>1</code> ein und drücke Enter).</span>
+            <span class="lang-en">Select option <strong>[1] Workstation</strong> (type <code>1</code> and press Enter).</span>
+          </li>
+          <li class="step-item">
+            <span class="lang-de">Lass das Fenster geöffnet – der Dienst läuft nun im Hintergrund und lauscht auf Anfragen.</span>
+            <span class="lang-en">Keep the window open – the daemon is now active and listening for incoming client requests.</span>
+          </li>
+        </ol>
+
+        <!-- SVG Terminal Mockup 1 replacing Screenshot 2 -->
+        <div class="visual-diagram-card">
+          <div class="terminal-window" style="margin: 0;">
+            <div class="terminal-titlebar">
+              <div class="terminal-dots">
+                <span class="terminal-dot dot-red"></span>
+                <span class="terminal-dot dot-yellow"></span>
+                <span class="terminal-dot dot-green"></span>
+              </div>
+              <span class="terminal-title">Terminal &bull; BDB OS Remote Installer</span>
+            </div>
+            <div class="terminal-body" style="font-size: 0.85rem;">
+              <div style="color: #58a6ff; font-weight: bold;">=== BDB OS REMOTE INSTALLER v1.1.0 ===</div>
+              <div style="color: #8b949e;">Detecting local network topology... Tailscale Node: OK</div>
+              <br/>
+              <div style="color: #f1e05a;">? Please select device role:</div>
+              <div style="color: #7ee787; font-weight: bold;">&gt; [1] Workstation (Host / Studio Computer)</div>
+              <div style="color: #8b949e;">  [2] Laptop (Client / Travel Computer)</div>
+              <div style="color: #8b949e;">  [3] Update existing installation</div>
+              <br/>
+              <div style="color: #7ee787;">✔ Configured BDB OS Remote Gateway Daemon on port 3000</div>
+              <div style="color: #58a6ff;">ℹ Workstation is listening on tailscale: studio-mac-pro</div>
+            </div>
+          </div>
+          <div class="diagram-caption lang-de">Terminal-Ansicht: Rollenauswahl &bdquo;[1] Workstation&ldquo;</div>
+          <div class="diagram-caption lang-en">Terminal View: Selecting &ldquo;[1] Workstation&rdquo;</div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">⚠️</div>
+          <div>
+            <span class="lang-de"><strong>Wichtig:</strong> Der Arbeits-Computer muss eingeschaltet und mit dem Internet verbunden bleiben, damit du von unterwegs auf ihn zugreifen kannst.</span>
+            <span class="lang-en"><strong>Important:</strong> The workstation must remain powered on and connected to the Internet for remote access.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4 -->
+      <section id="4-schritt-2" class="manual-section">
+        <div class="section-header">
+          <div class="section-num">04</div>
+          <h2 class="section-title lang-de">4. Schritt 2: Deinen Laptop verbinden</h2>
+          <h2 class="section-title lang-en">4. Step 2: Connect Your Travel Laptop</h2>
+        </div>
+
+        <p class="lang-de">Diese Schritte führst du auf dem <strong>Laptop</strong> durch, den du unterwegs mitnimmst:</p>
+        <p class="lang-en">Execute these steps on the <strong>Laptop</strong> you are taking with you on the road:</p>
+
+        <ol class="step-list">
+          <li class="step-item">
+            <span class="lang-de">Öffne das Terminal auf deinem Laptop.</span>
+            <span class="lang-en">Open the Terminal app on your laptop.</span>
+          </li>
+          <li class="step-item">
+            <span class="lang-de">Führe denselben Befehl aus:</span>
+            <span class="lang-en">Run the same installer command:</span>
+            <div class="terminal-window">
+              <div class="terminal-titlebar">
+                <div class="terminal-dots">
+                  <span class="terminal-dot dot-red"></span>
+                  <span class="terminal-dot dot-yellow"></span>
+                  <span class="terminal-dot dot-green"></span>
+                </div>
+                <span class="terminal-title">bash &bull; Laptop Setup</span>
+                <button class="copy-btn" onclick="copyCode(this, 'npx @hybridlabor-api/bdb-os-remote@latest installer')">
+                  <span>📋 Copy</span>
+                </button>
+              </div>
+              <div class="terminal-body">
+                <span class="cmd-prompt">$</span><span class="cmd-text">npx @hybridlabor-api/bdb-os-remote@latest installer</span>
+              </div>
+            </div>
+          </li>
+          <li class="step-item">
+            <span class="lang-de">Wähle diesmal die Option <strong>[2] Laptop</strong>.</span>
+            <span class="lang-en">This time, choose option <strong>[2] Laptop</strong>.</span>
+          </li>
+          <li class="step-item">
+            <span class="lang-de">Gib den <strong>Tailscale-Namen</strong> deines Arbeits-Computers ein (z. B. <code>studio-mac-pro</code>).</span>
+            <span class="lang-en">Enter the <strong>Tailscale machine name</strong> of your workstation (e.g. <code>studio-mac-pro</code>).</span>
+          </li>
+          <li class="step-item">
+            <span class="lang-de">Bestätige mit Enter. Der Installer konfiguriert Claude Desktop automatisch.</span>
+            <span class="lang-en">Confirm with Enter. The installer will automatically configure Claude Desktop.</span>
+          </li>
+          <li class="step-item">
+            <span class="lang-de">Schließe <strong>Claude Desktop</strong> komplett (Cmd+Q) und starte es neu.</span>
+            <span class="lang-en">Quit <strong>Claude Desktop</strong> completely (Cmd+Q) and reopen it.</span>
+          </li>
+        </ol>
+
+        <!-- SVG Terminal Mockup 2 replacing Screenshot 3 -->
+        <div class="visual-diagram-card">
+          <div class="terminal-window" style="margin: 0;">
+            <div class="terminal-titlebar">
+              <div class="terminal-dots">
+                <span class="terminal-dot dot-red"></span>
+                <span class="terminal-dot dot-yellow"></span>
+                <span class="terminal-dot dot-green"></span>
+              </div>
+              <span class="terminal-title">Terminal &bull; Setup Success</span>
+            </div>
+            <div class="terminal-body" style="font-size: 0.85rem;">
+              <div style="color: #7ee787;">✔ Successfully resolved host: studio-mac-pro.tailnet.ts.net</div>
+              <div style="color: #7ee787;">✔ Injected local Heimdall Token Saver & remote BDB Gateway</div>
+              <div style="color: #7ee787;">✔ Configured Claude Desktop MCP config file at ~/Library/Application Support/Claude/claude_desktop_config.json</div>
+              <br/>
+              <div style="background: rgba(16, 185, 129, 0.2); border-left: 3px solid #10b981; padding: 0.5rem;">
+                <span style="color: #10b981; font-weight: bold;">🎉 SUCCESS:</span> Your laptop is now linked to your workstation!
+              </div>
+            </div>
+          </div>
+          <div class="diagram-caption lang-de">Erfolgsmeldung nach der Laptop-Einrichtung</div>
+          <div class="diagram-caption lang-en">Success message after laptop configuration</div>
+        </div>
+      </section>
+
+      <!-- Section 5 -->
+      <section id="5-verbindungsart" class="manual-section">
+        <div class="section-header">
+          <div class="section-num">05</div>
+          <h2 class="section-title lang-de">5. Verbindungsart wählen: Einfach oder Einzeln</h2>
+          <h2 class="section-title lang-en">5. Connection Modes: All-in-One vs Individual</h2>
+        </div>
+
+        <p class="lang-de">Während der Einrichtung auf dem Laptop wirst du gefragt, wie die Verbindung aufgebaut werden soll:</p>
+        <p class="lang-en">During the laptop setup, you can choose how remote tools are bundled into Claude:</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th><span class="lang-de">Option</span><span class="lang-en">Option</span></th>
+                <th><span class="lang-de">Für wen geeignet?</span><span class="lang-en">Best For</span></th>
+                <th><span class="lang-de">Funktionsweise</span><span class="lang-en">How it works</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1 &ndash; Alles-in-einem (Empfohlen / Recommended)</strong></td>
+                <td><span class="lang-de">Für fast alle Nutzer</span><span class="lang-en">Almost all users</span></td>
+                <td><span class="lang-de">Alle Werkzeuge deines Arbeits-PCs werden über <strong>eine einzige</strong> Gateway-Verbindung gebündelt. Schnell, unkompliziert und sparsam.</span><span class="lang-en">All remote workstation tools are bundled into <strong>a single</strong> unified gateway. Faster, leaner, and zero configuration friction.</span></td>
+              </tr>
+              <tr>
+                <td><strong>2 &ndash; Einzelverbindungen (Modular)</strong></td>
+                <td><span class="lang-de">Nur für sehr erfahrene Power-User</span><span class="lang-en">Advanced power users</span></td>
+                <td><span class="lang-de">Jedes einzelne MCP-Werkzeug wird separat als eigener Server eingetragen. Mehr granulare Kontrolle, aber komplexer.</span><span class="lang-en">Each MCP tool is connected as an isolated individual entry. Granular control, but higher configuration complexity.</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">💡</div>
+          <div>
+            <span class="lang-de">Wenn du dir unsicher bist: <strong>Wähle immer Option 1 (Alles-in-einem).</strong></span>
+            <span class="lang-en">If in doubt: <strong>Always choose Option 1 (All-in-One).</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6 -->
+      <section id="6-loslegen" class="manual-section">
+        <div class="section-header">
+          <div class="section-num">06</div>
+          <h2 class="section-title lang-de">6. Loslegen: So arbeitest du von unterwegs</h2>
+          <h2 class="section-title lang-en">6. Getting Started: Working Remotely</h2>
+        </div>
+
+        <p class="lang-de">
+          Sobald die Einrichtung abgeschlossen ist, musst du nichts weiter tun, als <strong>Claude Desktop auf deinem Laptop wie gewohnt zu öffnen</strong>. Im Hintergrund kümmert sich BDB OS Remote automatisch um den verschlüsselten Datenaustausch mit deinem Arbeits-Computer.
+        </p>
+        <p class="lang-en">
+          Once configured, you simply <strong>open Claude Desktop on your laptop as usual</strong>. BDB OS Remote runs quietly behind the scenes, routing your requests to your home workstation.
+        </p>
+
+        <p class="lang-de">Hier sind ein paar typische Beispiele, die du direkt in den Chat eingeben kannst:</p>
+        <p class="lang-en">Here are practical prompt examples you can use right away:</p>
+
+        <!-- SVG Claude Desktop Mockup replacing Screenshot 4 -->
+        <div class="visual-diagram-card">
+          <div style="background: #18181b; border: 1px solid #27272a; border-radius: var(--radius-md); overflow: hidden;">
+            <!-- Window Titlebar -->
+            <div style="background: #27272a; padding: 0.6rem 1rem; display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; gap: 6px;">
+                <span class="terminal-dot dot-red"></span>
+                <span class="terminal-dot dot-yellow"></span>
+                <span class="terminal-dot dot-green"></span>
+              </div>
+              <span style="font-size: 0.8rem; font-weight: 600; color: #a1a1aa;">Claude Desktop &bull; Remote Mode Active</span>
+              <span style="font-size: 0.75rem; color: #10b981; font-weight: bold;">● Connected to Studio PC</span>
+            </div>
+
+            <!-- Chat Container -->
+            <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+              <!-- User Message -->
+              <div style="align-self: flex-end; max-width: 80%; background: #3f3f46; color: #f4f4f5; padding: 0.85rem 1.15rem; border-radius: 16px 16px 4px 16px; font-size: 0.925rem;">
+                <div class="lang-de">&bdquo;Öffne das Projekt 'frontend-v2' auf meinem Arbeits-Computer und zeig mir, woran ich zuletzt gearbeitet habe.&ldquo;</div>
+                <div class="lang-en">&ldquo;Open the project 'frontend-v2' on my workstation and show me what I worked on last.&rdquo;</div>
+              </div>
+
+              <!-- Remote Tool Execution Badge -->
+              <div style="align-self: flex-start; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4); padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.78rem; color: #a5b4fc; font-family: var(--font-mono); display: flex; align-items: center; gap: 0.5rem;">
+                <span>⚡ remote_call &bull; filesystem.read_git_status (studio-mac-pro)</span>
+                <span style="color: #10b981;">✓ 42ms</span>
+              </div>
+
+              <!-- Assistant Message -->
+              <div style="align-self: flex-start; max-width: 85%; background: #27272a; color: #f4f4f5; padding: 1rem 1.25rem; border-radius: 16px 16px 16px 4px; font-size: 0.925rem; line-height: 1.5;">
+                <div class="lang-de">
+                  Ich habe das Projekt <code>frontend-v2</code> auf deinem Arbeits-Computer überprüft. Dein letzter Commit war:
+                  <div style="background: #18181b; padding: 0.5rem 0.75rem; border-radius: 6px; margin: 0.5rem 0; font-family: monospace; font-size: 0.85rem; color: #7ee787;">
+                    feat(auth): add tailscale SSO integration (vor 3 Std.)
+                  </div>
+                  Es gibt 2 ungespeicherte Entwürfe in <code>src/components/Header.tsx</code>. Möchtest du, dass ich die Änderungen für dich zusammenfasse?
+                </div>
+                <div class="lang-en">
+                  I inspected <code>frontend-v2</code> on your workstation. Your latest commit was:
+                  <div style="background: #18181b; padding: 0.5rem 0.75rem; border-radius: 6px; margin: 0.5rem 0; font-family: monospace; font-size: 0.85rem; color: #7ee787;">
+                    feat(auth): add tailscale SSO integration (3h ago)
+                  </div>
+                  There are 2 uncommitted changes in <code>src/components/Header.tsx</code>. Would you like me to summarize the diff for you?
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="diagram-caption lang-de">Claude Desktop im Remote-Betrieb mit Live-Werkzeugausführung auf dem Host-Rechner</div>
+          <div class="diagram-caption lang-en">Claude Desktop in Remote Mode executing tools on the remote workstation</div>
+        </div>
+      </section>
+
+      <!-- Section 7 -->
+      <section id="7-offline-modus" class="manual-section">
+        <div class="section-header">
+          <div class="section-num">07</div>
+          <h2 class="section-title lang-de">7. Projekte für unterwegs herunterladen (Offline-Modus)</h2>
+          <h2 class="section-title lang-en">7. Downloading Projects for Travel (Offline Mode)</h2>
+        </div>
+
+        <p class="lang-de">
+          Manchmal hat man unterwegs <strong>gar keinen Internetempfang</strong> – zum Beispiel im Flugzeug oder im ICE-Tunnel. Für diesen Fall gibt es die <strong>BDB Pull Engine</strong>. Sie lädt eine schlanke Kopie deines Projekts auf deinen Laptop, damit du auch komplett offline weiterprogrammieren kannst.
+        </p>
+        <p class="lang-en">
+          When traveling through areas with <strong>zero connectivity</strong> (such as flights or tunnels), you can use the <strong>BDB Pull Engine</strong>. It downloads a lightweight clone of your project to your laptop for local offline work.
+        </p>
+
+        <div class="terminal-window">
+          <div class="terminal-titlebar">
+            <div class="terminal-dots">
+              <span class="terminal-dot dot-red"></span>
+              <span class="terminal-dot dot-yellow"></span>
+              <span class="terminal-dot dot-green"></span>
+            </div>
+            <span class="terminal-title">bash &bull; BDB Offline Pull</span>
+            <button class="copy-btn" onclick="copyCode(this, 'npx @hybridlabor-api/bdb-os-remote pull mein-projekt')">
+              <span>📋 Copy</span>
+            </button>
+          </div>
+          <div class="terminal-body">
+            <span class="cmd-prompt">$</span><span class="cmd-text">npx @hybridlabor-api/bdb-os-remote pull mein-projekt</span>
+          </div>
+        </div>
+
+        <!-- SVG Pull Progress replacing Screenshot 5 -->
+        <div class="visual-diagram-card">
+          <div class="terminal-window" style="margin: 0;">
+            <div class="terminal-titlebar">
+              <div class="terminal-dots">
+                <span class="terminal-dot dot-red"></span>
+                <span class="terminal-dot dot-yellow"></span>
+                <span class="terminal-dot dot-green"></span>
+              </div>
+              <span class="terminal-title">Terminal &bull; BDB Remote Pull</span>
+            </div>
+            <div class="terminal-body" style="font-size: 0.85rem;">
+              <div style="color: #58a6ff;">📦 BDB Remote Pull: Fetching project 'frontend-v2' from workstation...</div>
+              <div style="color: #8b949e;">Skipping node_modules, .git/objects cache, .venv (Smart Filter Active)</div>
+              <br/>
+              <div style="color: #7ee787; font-family: monospace;">
+                Progress: [████████████████████████████████] 100% (14.2 MB / 14.2 MB)
+              </div>
+              <br/>
+              <div style="color: #10b981; font-weight: bold;">✔ Project extracted to: ~/bdb-dev-local/frontend-v2/</div>
+              <div style="color: #94a3b8;">ℹ You can now work 100% offline. Re-sync with 'push' when online.</div>
+            </div>
+          </div>
+          <div class="diagram-caption lang-de">Terminal-Downloadfortschritt der BDB Pull Funktion</div>
+          <div class="diagram-caption lang-en">Terminal download progress of the BDB Pull feature</div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">💡</div>
+          <div>
+            <span class="lang-de"><strong>Automatische Optimierung:</strong> Große, unwichtige Ordner (wie <code>node_modules</code> oder Cache) werden beim Download automatisch gefiltert, damit die Übertragung blitzschnell geht.</span>
+            <span class="lang-en"><strong>Smart Filtering:</strong> Bulky non-essential folders (like <code>node_modules</code> or temporary caches) are automatically excluded during pull for maximum transfer speed.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 8 -->
+      <section id="8-update" class="manual-section">
+        <div class="section-header">
+          <div class="section-num">08</div>
+          <h2 class="section-title lang-de">8. Software aktuell halten (Updates)</h2>
+          <h2 class="section-title lang-en">8. Keeping the Software Updated</h2>
+        </div>
+
+        <p class="lang-de">Um stets von neuen Features, Sicherheitsupdates und Performanceverbesserungen zu profitieren, führst du einfach folgenden Befehl aus:</p>
+        <p class="lang-en">To ensure you always receive the latest features, security patches, and optimizations, simply rerun the installer:</p>
+
+        <div class="terminal-window">
+          <div class="terminal-titlebar">
+            <div class="terminal-dots">
+              <span class="terminal-dot dot-red"></span>
+              <span class="terminal-dot dot-yellow"></span>
+              <span class="terminal-dot dot-green"></span>
+            </div>
+            <span class="terminal-title">bash &bull; Software Update</span>
+            <button class="copy-btn" onclick="copyCode(this, 'npx @hybridlabor-api/bdb-os-remote@latest installer')">
+              <span>📋 Copy</span>
+            </button>
+          </div>
+          <div class="terminal-body">
+            <span class="cmd-prompt">$</span><span class="cmd-text">npx @hybridlabor-api/bdb-os-remote@latest installer</span>
+          </div>
+        </div>
+
+        <p class="lang-de">Wähle im Menü einfach <strong>&bdquo;Aktualisieren&ldquo;</strong> (Update), sobald der Dialog erscheint.</p>
+        <p class="lang-en">Select the <strong>&ldquo;Update&rdquo;</strong> option when prompted in the interactive menu.</p>
+      </section>
+
+      <!-- Section 9 -->
+      <section id="9-fehlerbehebung" class="manual-section">
+        <div class="section-header">
+          <div class="section-num">09</div>
+          <h2 class="section-title lang-de">9. Fehlerbehebung – Wenn etwas nicht klappt</h2>
+          <h2 class="section-title lang-en">9. Troubleshooting & Diagnostics</h2>
+        </div>
+
+        <p class="lang-de">Klicke auf ein Problem, um die passende Sofortlösung zu sehen:</p>
+        <p class="lang-en">Click on any symptom below for an immediate step-by-step diagnostic resolution:</p>
+
+        <div class="troubleshoot-grid">
+          <!-- Issue 1 -->
+          <div class="accordion-item open">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <div class="accordion-header-left">
+                <span class="status-badge-err">ISSUE</span>
+                <span class="lang-de">Die Verbindung zum Arbeits-Computer klappt nicht</span>
+                <span class="lang-en">Connection to workstation fails</span>
+              </div>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <p class="lang-de">1. Öffne Tailscale auf dem Laptop und prüfe, ob der Status grün (Connected) ist.</p>
+              <p class="lang-en">1. Open Tailscale on your laptop and verify the status is green (Connected).</p>
+              <p class="lang-de">2. Führe im Terminal einen Ping-Test aus (ersetze <code>name-des-computers</code>):</p>
+              <p class="lang-en">2. Run a network ping test in your terminal (replace <code>computer-name</code>):</p>
+              <div class="terminal-window">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dots"><span class="terminal-dot dot-red"></span><span class="terminal-dot dot-yellow"></span><span class="terminal-dot dot-green"></span></div>
+                  <span class="terminal-title">bash</span>
+                  <button class="copy-btn" onclick="copyCode(this, 'tailscale ping name-des-computers')"><span>📋 Copy</span></button>
+                </div>
+                <div class="terminal-body"><span class="cmd-prompt">$</span><span class="cmd-text">tailscale ping name-des-computers</span></div>
+              </div>
+              <p class="lang-de"><em>Antwort erhalten?</em> Dann steht das Netzwerk. <em>Keine Antwort?</em> Der Arbeits-Computer ist aus oder nicht im Internet.</p>
+              <p class="lang-en"><em>Pong received?</em> Network is reachable. <em>Timed out?</em> Workstation is powered off or disconnected from internet.</p>
+            </div>
+          </div>
+
+          <!-- Issue 2 -->
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <div class="accordion-header-left">
+                <span class="status-badge-err">ISSUE</span>
+                <span class="lang-de">Claude Desktop zeigt keine entfernten Werkzeuge an</span>
+                <span class="lang-en">Claude Desktop does not show remote workstation tools</span>
+              </div>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <ol style="padding-left: 1.25rem; line-height: 1.6;">
+                <li class="lang-de">Schließe Claude Desktop vollständig (nicht nur minimieren &rarr; Cmd+Q auf Mac).</li>
+                <li class="lang-en">Quit Claude Desktop completely (Cmd+Q on macOS, not just closing the window).</li>
+                <li class="lang-de">Starte Claude Desktop neu.</li>
+                <li class="lang-en">Relaunch Claude Desktop.</li>
+                <li class="lang-de">Prüfe, ob der Server auf dem Arbeits-Computer aktiv ist.</li>
+                <li class="lang-en">Verify that the gateway daemon is actively running on the workstation.</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- Issue 3 -->
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <div class="accordion-header-left">
+                <span class="status-badge-err">ISSUE</span>
+                <span class="lang-de">Server auf dem Arbeits-Computer manuell neu starten</span>
+                <span class="lang-en">Manually restart the daemon on workstation</span>
+              </div>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <p class="lang-de">Falls der Hintergrunddienst beendet wurde, tippe auf dem Arbeits-Computer:</p>
+              <p class="lang-en">If the background service stopped, execute on the workstation:</p>
+              <div class="terminal-window">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dots"><span class="terminal-dot dot-red"></span><span class="terminal-dot dot-yellow"></span><span class="terminal-dot dot-green"></span></div>
+                  <span class="terminal-title">bash</span>
+                  <button class="copy-btn" onclick="copyCode(this, 'npx @hybridlabor-api/bdb-os-remote server')"><span>📋 Copy</span></button>
+                </div>
+                <div class="terminal-body"><span class="cmd-prompt">$</span><span class="cmd-text">npx @hybridlabor-api/bdb-os-remote server</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Issue 4 -->
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <div class="accordion-header-left">
+                <span class="status-badge-err">ISSUE</span>
+                <span class="lang-de">Status & Latenz vom Laptop aus diagnostizieren</span>
+                <span class="lang-en">Check status & latency from laptop</span>
+              </div>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <p class="lang-de">Führe diesen Befehl auf deinem Laptop aus:</p>
+              <p class="lang-en">Run this diagnostic command on your laptop:</p>
+              <div class="terminal-window">
+                <div class="terminal-titlebar">
+                  <div class="terminal-dots"><span class="terminal-dot dot-red"></span><span class="terminal-dot dot-yellow"></span><span class="terminal-dot dot-green"></span></div>
+                  <span class="terminal-title">bash</span>
+                  <button class="copy-btn" onclick="copyCode(this, 'npx @hybridlabor-api/bdb-os-remote status --host name-deines-computers')"><span>📋 Copy</span></button>
+                </div>
+                <div class="terminal-body"><span class="cmd-prompt">$</span><span class="cmd-text">npx @hybridlabor-api/bdb-os-remote status --host name-deines-computers</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SVG Status Mockup replacing Screenshot 6 -->
+        <div class="visual-diagram-card">
+          <div class="terminal-window" style="margin: 0;">
+            <div class="terminal-titlebar">
+              <div class="terminal-dots">
+                <span class="terminal-dot dot-red"></span>
+                <span class="terminal-dot dot-yellow"></span>
+                <span class="terminal-dot dot-green"></span>
+              </div>
+              <span class="terminal-title">Terminal &bull; Telemetry & Health Status</span>
+            </div>
+            <div class="terminal-body" style="font-size: 0.85rem;">
+              <div style="color: #58a6ff;">BDB OS Remote &bull; Health Diagnostic</div>
+              <div style="color: #8b949e;">Target: studio-mac-pro.tailnet.ts.net</div>
+              <br/>
+              <div>Status: <span style="color: #10b981; font-weight: bold;">● ONLINE (Ready)</span></div>
+              <div>WireGuard RTT: <span style="color: #10b981;">18.4ms (Direct Peer-to-Peer)</span></div>
+              <div>Heimdall Compression: <span style="color: #58a6ff;">Active (Avg. 72% Token Savings)</span></div>
+              <div>Active Remote MCP Bridges: <span style="color: #7ee787;">8 / 8 Healthy</span></div>
+            </div>
+          </div>
+          <div class="diagram-caption lang-de">Erfolgreiche Systemdiagnose über den Status-Befehl</div>
+          <div class="diagram-caption lang-en">Successful system diagnostics telemetry output</div>
+        </div>
+      </section>
+
+      <!-- Section 10 -->
+      <section id="10-faq" class="manual-section">
+        <div class="section-header">
+          <div class="section-num">10</div>
+          <h2 class="section-title lang-de">10. Häufig gestellte Fragen (FAQ)</h2>
+          <h2 class="section-title lang-en">10. Frequently Asked Questions (FAQ)</h2>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-card">
+            <div class="faq-q">
+              <span>🔑</span>
+              <span class="lang-de">Muss ich mich mit einem Passwort anmelden?</span>
+              <span class="lang-en">Do I need to authenticate with a password?</span>
+            </div>
+            <div class="faq-a lang-de">
+              Nein. Der Zugang läuft sicher und nahtlos über dein persönliches Tailscale-Konto. Solange du auf beiden Geräten angemeldet bist, autorisiert das System Verbindungen automatisch.
+            </div>
+            <div class="faq-a lang-en">
+              No. Access is secured entirely through your Tailscale network identity. As long as both devices are logged into your tailnet, connections are authenticated automatically.
+            </div>
+          </div>
+
+          <div class="faq-card">
+            <div class="faq-q">
+              <span>🛡️</span>
+              <span class="lang-de">Kann jemand meine Daten im Zug/Café abfangen?</span>
+              <span class="lang-en">Can anyone intercept my data on public Wi-Fi?</span>
+            </div>
+            <div class="faq-a lang-de">
+              Nein. Die gesamte Kommunikation ist nach modernsten kryptografischen Standards Ende-zu-Ende verschlüsselt (WireGuard-Protokoll) und läuft durch einen geschlossenen Tunnel.
+            </div>
+            <div class="faq-a lang-en">
+              No. All communication is encrypted end-to-end using state-of-the-art WireGuard cryptographic standards inside an isolated private mesh tunnel.
+            </div>
+          </div>
+
+          <div class="faq-card">
+            <div class="faq-q">
+              <span>📱</span>
+              <span class="lang-de">Verbraucht das viel Datenvolumen vom Handy-Hotspot?</span>
+              <span class="lang-en">Does it consume heavy mobile tethering data?</span>
+            </div>
+            <div class="faq-a lang-de">
+              Nein, extrem wenig. Dank des integrierten Heimdall Token Savers werden unnötige Terminal- und Kontextdaten um bis zu 85% komprimiert, bevor sie übertragen werden.
+            </div>
+            <div class="faq-a lang-en">
+              No, extremely little. Thanks to the built-in Heimdall Token Saver engine, token and terminal context payloads are compressed by up to 85% before transmission.
+            </div>
+          </div>
+
+          <div class="faq-card">
+            <div class="faq-q">
+              <span>⚡</span>
+              <span class="lang-de">Muss der Arbeits-Computer die ganze Zeit laufen?</span>
+              <span class="lang-en">Must my home workstation remain turned on?</span>
+            </div>
+            <div class="faq-a lang-de">
+              Ja. Wenn der Rechner ausgeschaltet oder im Ruhezustand ist, kann keine Verbindung hergestellt werden. (Tipp: In den macOS-Energieeinstellungen das automatische Einschlafen bei Netzbetrieb deaktivieren).
+            </div>
+            <div class="faq-a lang-en">
+              Yes. If the host machine is turned off or in deep sleep, it cannot accept incoming requests. (Tip: Disable sleep mode in macOS Energy settings while connected to power).
+            </div>
+          </div>
+
+          <div class="faq-card">
+            <div class="faq-q">
+              <span>👥</span>
+              <span class="lang-de">Kann ich beide Geräte gleichzeitig nutzen?</span>
+              <span class="lang-en">Can I use both machines simultaneously?</span>
+            </div>
+            <div class="faq-a lang-de">
+              Ja, absolut. Du kannst problemlos direkt am Arbeits-PC sitzen und gleichzeitig Befehle über den Laptop abfeuern.
+            </div>
+            <div class="faq-a lang-en">
+              Yes, absolutely. You can work directly at the workstation while simultaneously triggering queries and tools from your laptop.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 11 -->
+      <section id="11-woerterbuch" class="manual-section">
+        <div class="section-header">
+          <div class="section-num">11</div>
+          <h2 class="section-title lang-de">11. Kleines Wörterbuch der wichtigsten Begriffe</h2>
+          <h2 class="section-title lang-en">11. Glossary of Key Terms</h2>
+        </div>
+
+        <p class="lang-de">Die wichtigsten Fachbegriffe einfach und verständlich erklärt:</p>
+        <p class="lang-en">Key terminology explained in plain, intuitive language:</p>
+
+        <div class="glossary-grid">
+          <div class="glossary-card">
+            <div class="glossary-term">Arbeits-Computer / Workstation</div>
+            <div class="glossary-def lang-de">Dein leistungsstarker Computer zuhause oder im Büro, auf dem deine großen Projekte, Datenbanken und KI-Tools liegen.</div>
+            <div class="glossary-def lang-en">Your powerful home or studio machine hosting heavy projects, AI models, databases, and system tools.</div>
+          </div>
+
+          <div class="glossary-card">
+            <div class="glossary-term">Laptop / Client</div>
+            <div class="glossary-def lang-de">Das leichte Gerät, das du unterwegs im Zug, Hotel oder Café dabei hast, um von überall zu arbeiten.</div>
+            <div class="glossary-def lang-en">The portable travel device you carry on trains, flights, or cafés to interact with your workstation.</div>
+          </div>
+
+          <div class="glossary-card">
+            <div class="glossary-term">Tailscale</div>
+            <div class="glossary-def lang-de">Ein sicheres Programm, das ein unsichtbares, verschlüsseltes &bdquo;Kabel&ldquo; zwischen deinen Computern spannt &ndash; weltweit und ohne Router-Bastelei.</div>
+            <div class="glossary-def lang-en">A secure mesh VPN tool that establishes an encrypted private tunnel between your devices worldwide without router port forwarding.</div>
+          </div>
+
+          <div class="glossary-card">
+            <div class="glossary-term">Terminal</div>
+            <div class="glossary-def lang-de">Das praktische Befehlseingabefenster deines Betriebssystems, in das du kurze Steuerungsbefehle wie <code>npx</code> eintippst.</div>
+            <div class="glossary-def lang-en">The command-line interface on your computer used to trigger quick installer and orchestration commands.</div>
+          </div>
+
+          <div class="glossary-card">
+            <div class="glossary-term">Gedächtnis (memB Engine)</div>
+            <div class="glossary-def lang-de">Ein persistenter Wissensspeicher auf deinem Arbeits-Computer, in dem Entscheidungen und Projektarchitekturen dauerhaft auffindbar bleiben.</div>
+            <div class="glossary-def lang-en">The local vector knowledge repository on your host machine that remembers architectural decisions and project state.</div>
+          </div>
+
+          <div class="glossary-card">
+            <div class="glossary-term">Offline-Mitnahme (BDB Pull)</div>
+            <div class="glossary-def lang-de">Funktion, um ein beliebiges Projekt blitzschnell auf den Laptop zu spiegeln, um auch ganz ohne Internetempfang produktiv zu sein.</div>
+            <div class="glossary-def lang-en">The smart cloning mechanism that pulls lightweight project copies onto your laptop for seamless offline productivity.</div>
+          </div>
+
+          <div class="glossary-card">
+            <div class="glossary-term">Heimdall Token Saver</div>
+            <div class="glossary-def lang-de">Ein intelligenter Kompressionsfilter, der Ausgaben zusammenfasst und dafür sorgt, dass extrem wenig mobile Daten verbraucht werden.</div>
+            <div class="glossary-def lang-en">An intelligent context compression pipeline that reduces token bandwidth by up to 85% for lightning-fast remote responses.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-links">
+      <a href="#1-einfuehrung"><span class="lang-de">Nach oben</span><span class="lang-en">Back to top</span></a> &bull;
+      <a href="https://hybridlabor.de" target="_blank">Hybridlabor Ecosystem</a> &bull;
+      <a href="https://tailscale.com" target="_blank">Tailscale Network</a>
+    </div>
+    <div>
+      <span class="lang-de">&copy; 2026 BDB OS Remote &bull; Version 1.1.0 &bull; Erstellt mit dem BDB Autonomous Multi-Agent Framework</span>
+      <span class="lang-en">&copy; 2026 BDB OS Remote &bull; Version 1.1.0 &bull; Built with BDB Autonomous Multi-Agent Framework</span>
+    </div>
+  </footer>
+
+  <script>
+    // Language Toggle
+    function setLanguage(lang) {
+      document.documentElement.setAttribute('lang', lang);
+      localStorage.setItem('bdb_manual_lang', lang);
+      
+      const btnDe = document.getElementById('btnLangDe');
+      const btnEn = document.getElementById('btnLangEn');
+      
+      if (lang === 'de') {
+        btnDe.classList.add('active');
+        btnEn.classList.remove('active');
+        document.getElementById('globalSearch').placeholder = 'Suchen...';
+      } else {
+        btnEn.classList.add('active');
+        btnDe.classList.remove('active');
+        document.getElementById('globalSearch').placeholder = 'Search topics...';
+      }
+      updateChecklist();
+    }
+
+    // Initialize Language
+    const savedLang = localStorage.getItem('bdb_manual_lang') || 'de';
+    setLanguage(savedLang);
+
+    // Theme Switcher
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('bdb_manual_theme', newTheme);
+      document.getElementById('themeToggle').innerText = newTheme === 'dark' ? '🌙' : '☀️';
+    }
+
+    const savedTheme = localStorage.getItem('bdb_manual_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.getElementById('themeToggle').innerText = savedTheme === 'dark' ? '🌙' : '☀️';
+
+    // Copy Code to Clipboard
+    function copyCode(button, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span>✓ Copied!</span>';
+        button.classList.add('copied');
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // Interactive Checklist Tracker
+    function updateChecklist() {
+      const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+      let checkedCount = 0;
+      checkboxes.forEach((cb, i) => {
+        if (cb.checked) {
+          checkedCount++;
+          localStorage.setItem('bdb_check_' + i, '1');
+        } else {
+          localStorage.removeItem('bdb_check_' + i);
+        }
+      });
+      const lang = document.documentElement.getAttribute('lang') || 'de';
+      const label = lang === 'de' ? `${checkedCount}/5 Erledigt` : `${checkedCount}/5 Completed`;
+      document.getElementById('checkCount').innerText = label;
+      if (checkedCount === 5) {
+        document.getElementById('checkCount').style.color = 'var(--success)';
+      } else {
+        document.getElementById('checkCount').style.color = 'var(--accent-primary)';
+      }
+    }
+
+    // Restore Checklist from storage
+    document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach((cb, i) => {
+      if (localStorage.getItem('bdb_check_' + i) === '1') {
+        cb.checked = true;
+      }
+    });
+    updateChecklist();
+
+    // Accordion Toggle
+    function toggleAccordion(header) {
+      const item = header.parentElement;
+      item.classList.toggle('open');
+    }
+
+    // Global Search Filter
+    document.getElementById('globalSearch').addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      const sections = document.querySelectorAll('.manual-section');
+      
+      sections.forEach(sec => {
+        if (!query) {
+          sec.style.display = 'block';
+          return;
+        }
+        const text = sec.innerText.toLowerCase();
+        if (text.includes(query)) {
+          sec.style.display = 'block';
+        } else {
+          sec.style.display = 'none';
+        }
+      });
+    });
+
+    // Keyboard shortcut '/' for search
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+        e.preventDefault();
+        document.getElementById('globalSearch').focus();
+      }
+    });
+
+    // Mobile Menu Toggle
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('sidebarNav').classList.toggle('mobile-open');
+    });
+
+    // Scrollspy & Reading Progress Bar
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById('progress-bar').style.width = scrolled + '%';
+
+      // Scrollspy
+      const sections = document.querySelectorAll('.manual-section');
+      const navLinks = document.querySelectorAll('.nav-item a');
+      let currentSectionId = '';
+
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 120;
+        if (winScroll >= top) {
+          currentSectionId = sec.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + currentSectionId) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

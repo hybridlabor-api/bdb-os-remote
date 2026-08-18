@@ -14,7 +14,14 @@
   "scripts": {
     "start": "node bin/cli.js",
     "installer": "node bin/installer.js",
-    "test": "node test/test.js"
+    "test": "node test/test.js",
+    "build": "electron-builder"
+  },
+  "build": {
+    "appId": "com.hybridlabor.bdb-os-remote",
+    "mac": {
+      "target": "dir"
+    }
   },
   "keywords": [
     "bdb",
@@ -38,5 +45,10 @@
   "homepage": "https://github.com/hybridlabor-api/bdb-os-remote#readme",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "electron": "^43.4.0",
+    "electron-builder": "^26.15.3",
+    "menubar": "^9.5.3"
   }
 }

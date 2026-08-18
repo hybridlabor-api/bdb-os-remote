@@ -1,0 +1,38 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: node
+          package-name: "@hybridlabor-api/bdb-os-remote"
+
+      # The following steps run only if a new release was created by merging the Release Please PR
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+      
+      - uses: actions/setup-node@v4
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm ci
+        if: ${{ steps.release.outputs.release_created }}
+
+      - run: npm publish --access public
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

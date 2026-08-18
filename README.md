@@ -1,82 +1,49 @@
 ```text
-          ██████╗ ██████╗ ██████╗     ██████╗ ███████╗███╗   ███╗ ██████╗ ████████╗███████╗
-          ██╔══██╗██╔══██╗██╔══██╗    ██╔══██╗██╔════╝████╗ ████║██╔═══██╗╚══██╔══╝██╔════╝
-          ██████╔╝██║  ██║██████╔╝    ██████╔╝█████╗  ██╔████╔██║██║   ██║   ██║   █████╗  
-          ██╔══██╗██║  ██║██╔══██╗    ██╔══██╗██╔══╝  ██║╚██╔╝██║██║   ██║   ██║   ██╔══╝  
-          ██████╔╝██████╔╝██████╔╝    ██║  ██║███████╗██║ ╚═╝ ██║╚██████╔╝   ██║   ███████╗
-          ╚═════╝ ╚═════╝ ╚═════╝     ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝ ╚═════╝    ╚═╝   ╚══════╝
-                         O P T I M I Z E D   A G E N T   S K I L L S - Module
+██████╗ ██████╗ ██████╗     ██████╗ ███████╗███╗   ███╗ ██████╗ ████████╗███████╗
+██╔══██╗██╔══██╗██╔══██╗    ██╔══██╗██╔════╝████╗ ████║██╔═══██╗╚══██╔══╝██╔════╝
+██████╔╝██║  ██║██████╔╝    ██████╔╝█████╗  ██╔████╔██║██║   ██║   ██║   █████╗  
+██╔══██╗██║  ██║██╔══██╗    ██╔══██╗██╔══╝  ██║╚██╔╝██║██║   ██║   ██║   ██╔══╝  
+██████╔╝██████╔╝██████╔╝    ██║  ██║███████╗██║ ╚═╝ ██║╚██████╔╝   ██║   ███████╗
+╚═════╝ ╚═════╝ ╚═════╝     ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝ ╚═════╝    ╚═╝   ╚══════╝
+                               O P T I M I Z E D   A G E N T   S K I L L S
 ```
-# 🌐 BDB OS Remote (Zero-Trust Tailscale SSE Gateway)
+# 🌐 BDB CONNECT (v2.0) - Zero-Trust Tailscale Gateway
 
 [![npm version](https://img.shields.io/npm/v/@hybridlabor-api/bdb-os-remote.svg?style=flat-square)](https://www.npmjs.com/package/@hybridlabor-api/bdb-os-remote)
-[![CI](https://github.com/hybridlabor-api/bdb-os-remote/actions/workflows/ci.yml/badge.svg)](https://github.com/hybridlabor-api/bdb-os-remote/actions/workflows/ci.yml)
-[![Documentation](https://img.shields.io/badge/Docs-Live%20Manual-blue?style=flat-square&logo=github)](https://hybridlabor-api.github.io/bdb-os-remote/)
+[![CI](https://github.com/hybridlabor-api/bdb-os-remote/actions/workflows/build-crossplatform.yml/badge.svg)](https://github.com/hybridlabor-api/bdb-os-remote/actions/workflows/build-crossplatform.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Tailscale](https://img.shields.io/badge/Tailscale-Zero--Trust-black?logo=tailscale)](https://tailscale.com/)
 
-> **Zero-Trust SSE Gateway & Mobile Thin-Client Bridge** for Claude Desktop, Claude Code, and AI Agents over Tailscale.
-> 
-> 🌐 **Live User Manual & Interactive Guide:** [https://hybridlabor-api.github.io/bdb-os-remote/](https://hybridlabor-api.github.io/bdb-os-remote/)
+> **The Identity-Aware Proxy & Native Menubar App** for remote execution of Antigravity (AGY), Codex, and Claude Desktop over Tailscale.
 
-Work on your powerful stationary workstation directly from your mobile laptop (e.g., on an ICE train or in a café) with **zero perceived latency**, **under 5 KB/s bandwidth**, and **full access to all workstation compute, 152 BDB skills, and the memB vector memory engine**.
-
----
-
-## 🚀 The Full BDB Ecosystem
-**Note:** `bdb-os-remote` is a powerful standalone tool, but it is part of the larger **BDB Agent OS**. To unlock the ultimate multi-agent capabilities, skill libraries, and advanced Godmode orchestration workflows, check out the core repository:
-👉 [**bdb-dev-optimized-agent-skills**](https://github.com/hybridlabor-api/bdb-dev-optimized-agent-skills)
+Work on your powerful stationary workstation directly from your mobile laptop (e.g., on an ICE train) with **zero perceived latency**, **under 5 KB/s bandwidth**, and **full access to all workstation compute, 152 BDB skills, and the memB vector memory engine**.
 
 ---
 
 ## ⚡ Installation & Updates
 
-We recommend using the interactive installer, which handles configuring your Claude Desktop automatically.
+We recommend using the interactive universal installer. It natively supports macOS, Windows, and Linux.
 
-### Initial Installation
+### 1. Via Native App (macOS, Windows, Linux)
+Download the `.dmg`, `.exe` (NSIS), or `.AppImage` directly from the **[GitHub Releases](https://github.com/hybridlabor-api/bdb-os-remote/releases)** page. 
+
+### 2. Via CLI (Universal)
 Run the installer wizard on both your Workstation and your Laptop:
 ```bash
 npx @hybridlabor-api/bdb-os-remote@latest installer
 ```
-- **On your Workstation**: Select `[1] Workstation` to set up the server.
-- **On your Laptop**: Select `[2] Laptop` to configure your `claude_desktop_config.json` automatically and point it to the remote machine.
-
-### Updating to the Latest Version
-To ensure you have the latest features and security updates, simply run the installer command again:
-```bash
-npx @hybridlabor-api/bdb-os-remote@latest installer
-```
-Select the `Update` option when prompted to seamlessly upgrade your setup.
+- **On your Workstation**: Select `[1] Workstation` to start the Gateway.
+- **On your Laptop**: Select `[2] Laptop` to configure your agent automatically (supports AGY, Codex, and Claude).
 
 ---
 
-## ✨ Features & Function Examples (v1.1.0)
+## ✨ Was ist neu in v2.0 (BDB CONNECT)?
 
-Version 1.1.0 introduces powerful new ways to bridge the gap between your laptop and your workstation:
-
-### 🔀 Standard Multiplexer vs. Config Injector
-- **Standard Multiplexer**: Bundles all your remote workstation MCP servers into a single connection. Your laptop only connects to *one* endpoint, and the multiplexer intelligently routes requests to the 100+ individual MCPs running on your workstation.
-- **Config Injector**: Prefers granular control? The injector maps individual remote MCPs directly into your local `claude_desktop_config.json`, treating them as discrete remote tools.
-
-### 💾 Offline Cloning (Long Tunnel Fallback)
-When traveling through areas with zero cell coverage (like long tunnels), use the Offline Cloning feature. It efficiently pulls a snapshot of your remote project onto your local laptop so you can keep working offline, and syncs back when a connection is restored.
-```bash
-npx @hybridlabor-api/bdb-os-remote pull <project-name>
-```
-
-### 🧠 Asymmetric Token Saving
-To keep the SSE proxy lightning fast over weak connections, the gateway leverages **Heimdall Token Saving**. It aggressively minifies payloads over the Tailscale tunnel while expanding them to full context sizes natively on the workstation.
-
----
-
-## 💬 Prompt Examples for Claude Desktop
-
-Once connected, you can chat with Claude Desktop on your laptop exactly as if you were sitting at your workstation. Try these prompts:
-
-- 🏗️ **"Clone the workstation project 'frontend-v2' to my laptop for offline work."**
-- 🧠 **"Scan the remote memB memory for the architecture rules of our event-tech module."**
-- 🎮 **"Run the Unreal Engine MCP on my workstation to build the lighting sequence, and summarize the output."**
-- ⚙️ **"Trigger the Godmode_Engineering subagent remotely to refactor the database schema on the workstation."**
+- 🎛️ **Native Desktop App (Electron):** Ein wunderschönes, rahmenloses Popover-Fenster direkt in deiner macOS Statusleiste oder im Windows System-Tray. Steuere den Server-Status mit einem Klick!
+- 🌐 **Cross-Platform:** Voller Support für macOS (`.dmg`), Windows (`.exe`), und Linux (`.AppImage`) via GitHub Actions.
+- 🛡️ **Zero-Trust Identity-Aware Proxy:** Der Server prüft bei jedem Request, ob er von einer verifizierten `100.x.x.x` oder `fd7a:...` Tailscale-IP stammt.
+- 🔄 **Multi-Agent Support:** Nahtlose Integration für **Antigravity (AGY)**, **Codex / OpenCode**, und **Claude Desktop**.
+- 🚀 **Web UI Launcher:** Öffne das BDB OS Agent Workspace Web-Dashboard direkt über den neuen Button im Menüleisten-Fenster.
 
 ---
 
@@ -84,29 +51,31 @@ Once connected, you can chat with Claude Desktop on your laptop exactly as if yo
 
 ```mermaid
 graph TD
-    subgraph Laptop ["💻 Laptop Client"]
-        CD[Claude Desktop]
-        HEIM["🛡️ Heimdall Token Saver (Local)"]
-        PROXY["🌐 BDB SSE Proxy"]
-        CD --> HEIM
-        CD --> PROXY
+    subgraph Laptop ["💻 Laptop (Client)"]
+        UI["BDB CONNECT App"]
+        AGY["Antigravity (AGY)"]
+        CLAUDE["Claude Desktop"]
+        CODEX["Codex"]
+        MOCK["BDB Local Compatibility Mock"]
+        
+        AGY --> MOCK
+        CLAUDE --> MOCK
+        CODEX --> MOCK
     end
 
     subgraph Tailscale ["🔒 Tailscale WireGuard Mesh"]
-        TS["Bandwidth: < 5 KB/s"]
+        TS["Zero-Trust (100.x.x.x)"]
     end
 
-    subgraph Workstation ["🖥️ Stationary Workstation"]
-        GW["🔌 BDB Remote SSE Gateway :8000"]
+    subgraph Workstation ["🖥️ Workstation (Server)"]
+        GW["🔌 BDB CONNECT Gateway :8000"]
         MEMB["🧠 memB Vector Memory"]
-        SYN["👁️ Synapse 3D Engine"]
         FS["📁 Workspace Filesystem"]
         GW --> MEMB
-        GW --> SYN
         GW --> FS
     end
 
-    PROXY -->|HTTP/SSE| TS
+    MOCK -->|HTTP/SSE| TS
     TS --> GW
 ```
 
@@ -115,14 +84,10 @@ graph TD
 ## 🔒 Security & Requirements
 - **Tailscale**: Both machines must be logged into the same Tailscale network.
 - **No Open Ports**: Zero public port forwardings needed; protected by WireGuard encryption.
-- **Node.js**: Requires Node.js >= 18.0.0.
+- **Node.js**: Requires Node.js >= 18.0.0 (if using CLI).
 
-## 📖 User Manual & Documentation
-
-- 🇩🇪 / 🇬🇧 **[Bilingual Interactive Web Manual](docs/manual/index.html)** – Full step-by-step illustrated manual with instant DE/EN toggle, live search, and pre-flight checklist.
-- 🇩🇪 **[Deutsches Benutzerhandbuch (Markdown)](docs/BDB_OS_Remote_Benutzerhandbuch.md)** – Das vollständige deutsche Referenzhandbuch im Markdown-Format.
-- 🌐 **[Standalone HTML Manual](docs/BDB_OS_Remote_Benutzerhandbuch.html)** – Offline-fähige Standalone-HTML-Version.
-- 📚 **[Technical OpenWiki Architecture](.openwiki/quickstart.md)** – Detailed developer guides and internal module specifications.
+## 📖 Documentation
+Detailed technical documentation and architecture decisions are available in [.openwiki/architecture.md](.openwiki/architecture.md).
 
 ## 📄 License
 MIT © BDB Dev Team

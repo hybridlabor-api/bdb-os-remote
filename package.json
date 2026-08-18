@@ -1,20 +1,44 @@
 {
   "name": "@hybridlabor-api/bdb-os-remote",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "BDB OS Remote Workspace - Zero-Trust SSE Gateway & Mobile Thin-Client Bridge for Claude Desktop and AI Agents over Tailscale",
   "type": "module",
   "main": "src/index.js",
   "bin": {
+    "bdb-os-remote": "bin/cli.js",
     "bdb-remote": "bin/cli.js",
-    "bdb-remote-installer": "bin/installer.js"
+    "bdb-remote-installer": "bin/installer.js",
+    "installer": "bin/installer.js"
   },
+  "files": [
+    "bin",
+    "src",
+    "package.json",
+    "README.md"
+  ],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "start": "node bin/cli.js",
     "installer": "node bin/installer.js",
-    "test": "node test/test.js"
+    "test": "node test/test.js",
+    "build": "electron-builder"
+  },
+  "build": {
+    "productName": "BDB CONNECT",
+    "appId": "com.hybridlabor.bdb-os-remote",
+    "mac": {
+      "target": ["dmg", "zip"]
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "src/ui/icon.png"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "src/ui/icon.png"
+    }
   },
   "keywords": [
     "bdb",
@@ -38,5 +62,10 @@
   "homepage": "https://github.com/hybridlabor-api/bdb-os-remote#readme",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "electron": "^43.4.0",
+    "electron-builder": "^26.15.3",
+    "menubar": "^9.5.3"
   }
 }

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/hybridlabor-api/bdb-os-remote/compare/v1.2.0...v1.3.0) (2026-08-18)
+
+
+### Features
+
+* **installer:** auto-download and execute native OS installer (exe/dmg) during cli wizard ([6d65a70](https://github.com/hybridlabor-api/bdb-os-remote/commit/6d65a706a4a2f5ca10f043de4517f2dce3dd7531))
+
 ## [1.2.0](https://github.com/hybridlabor-api/bdb-os-remote/compare/v1.1.0...v1.2.0) (2026-08-18)
 
 

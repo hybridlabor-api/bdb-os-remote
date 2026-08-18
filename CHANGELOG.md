@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/hybridlabor-api/bdb-os-remote/compare/v1.4.0...v1.5.0) (2026-08-18)
+
+
+### Features
+
+* **service:** add native OS background service manager (launchd/schtasks) and autostart daemon ([9b0fd8a](https://github.com/hybridlabor-api/bdb-os-remote/commit/9b0fd8a6aa4a685b71e3b527392609ed36227b00))
+
 ## [1.4.0](https://github.com/hybridlabor-api/bdb-os-remote/compare/v1.3.0...v1.4.0) (2026-08-18)
 
 

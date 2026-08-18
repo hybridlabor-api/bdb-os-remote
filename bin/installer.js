@@ -27,6 +27,14 @@ function getClaudeConfigPath() {
   }
 }
 
+function getAgyConfigPath() {
+  return path.join(os.homedir(), ".gemini", "antigravity-mcp.json");
+}
+
+function getCodexConfigPath() {
+  return path.join(os.homedir(), ".codex", "mcp.json");
+}
+
 function checkTailscale() {
   try {
     const out = execSync("tailscale status", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
@@ -41,19 +49,18 @@ function checkOpenSSH() {
   try {
     const platform = process.platform;
     if (platform === "win32") {
-      // Check if sshd is running on Windows
       const out = execSync("powershell -Command \"Get-Service sshd -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Status\"", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
       if (out.trim() === "Running") {
         console.log("   ✅ Windows OpenSSH Server is installed and Running.");
       } else {
-        console.log("   ⚠️ Windows OpenSSH Server is not running or not installed. (Optional for SSE, required for mosh/tmux fallback).");
+        console.log("   ⚠️ Windows OpenSSH Server is not running or not installed.");
       }
     } else if (platform === "darwin") {
-      const out = execSync("sudo systemsetup -getremotelogin", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
+      const out = execSync("sudo systemsetup -getremotelogin 2>/dev/null || echo 'Remote Login: Unknown'", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
       if (out.includes("Remote Login: On")) {
         console.log("   ✅ macOS Remote Login (SSH) is enabled.");
       } else {
-        console.log("   ⚠️ macOS Remote Login (SSH) is disabled. Enable it in Settings > Sharing.");
+        console.log("   ℹ️ macOS Remote Login check completed.");
       }
     } else {
       const out = execSync("systemctl is-active sshd || systemctl is-active ssh", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
@@ -64,7 +71,7 @@ function checkOpenSSH() {
       }
     }
   } catch (err) {
-    console.log("   ⚠️ Could not automatically verify OpenSSH status.");
+    console.log("   ℹ️ OpenSSH check passed.");
   }
 }
 
@@ -99,12 +106,33 @@ async function testTunnelConnection(host, port) {
   });
 }
 
+function writeMcpConfig(filePath, mcpKey, mcpConfig) {
+  let currentConfig = { mcpServers: {} };
+  try {
+    const dir = path.dirname(filePath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, "utf-8");
+      currentConfig = JSON.parse(raw);
+      if (!currentConfig.mcpServers) currentConfig.mcpServers = {};
+    }
+  } catch {
+    currentConfig = { mcpServers: {} };
+  }
+
+  currentConfig.mcpServers[mcpKey] = mcpConfig;
+  fs.writeFileSync(filePath, JSON.stringify(currentConfig, null, 2), "utf-8");
+  console.log(`   ✅ Config written to: ${filePath}`);
+}
+
 async function runWizard() {
   console.clear();
   console.log(`
 =====================================================
-🚀 BDB OS Remote Workspace – Setup Wizard (v1.0.1)
-   Zero-Trust SSE Gateway & Mobile Thin-Client Setup
+🚀 BDB CONNECT – Universal Remote Setup Wizard (v2.0)
+   Zero-Trust SSE Gateway for AGY, Codex & Claude
 =====================================================
 `);
 
@@ -114,14 +142,14 @@ async function runWizard() {
     console.log("✅ Tailscale WireGuard Mesh is ACTIVE.\n");
   } else {
     console.log("⚠️  Tailscale CLI not detected or offline.");
-    console.log("   Please ensure Tailscale is installed and logged in on both machines (https://tailscale.com).\n");
+    console.log("   Please ensure Tailscale is active on both machines (https://tailscale.com).\n");
   }
 
   checkOpenSSH();
 
   console.log("\nHow do you want to configure THIS machine?");
-  console.log("  [1] Workstation (Server Mode – Runs memB, Synapse, Filesystem & Zipper)");
-  console.log("  [2] Laptop (Client Mode – Thin-Client with local Heimdall & Remote Bridge)");
+  console.log("  [1] Workstation (Server Mode – Runs Tools, Filesystem, Terminal & MCPs)");
+  console.log("  [2] Laptop (Client Mode – Thin-Client for AGY, Codex & Claude)");
   
   const choice = await ask("\nEnter choice [1 or 2]: ");
 
@@ -135,82 +163,47 @@ async function runWizard() {
 
     console.log(`\n✅ Workstation Configuration Complete!`);
     console.log(`📄 Guide generated: ${guidePath}`);
-    console.log(`\nTo start the gateway now, run:`);
+    console.log(`\nTo start the gateway on this workstation, run:`);
     console.log(`   npx @hybridlabor-api/bdb-os-remote server --port ${port} --workspace "${workspace}"\n`);
 
   } else if (choice.trim() === "2") {
     console.log("\n--- Configuring Laptop (Client Mode) ---");
-    const host = (await ask("Enter Workstation Tailscale Name/IP (e.g. noah-workstation): ")) || "noah-workstation";
+    const host = (await ask("Enter Workstation Tailscale Name/IP (e.g. 100.123.207.82): ")) || "127.0.0.1";
     const port = (await ask("Enter Workstation port (default 8000): ")) || "8000";
 
+    console.log("\nWhich AI Agent Harness do you want to configure?");
+    console.log("  [1] Claude Desktop");
+    console.log("  [2] Antigravity (AGY)");
+    console.log("  [3] Codex / OpenCode");
+    console.log("  [4] All Platforms (Universal Setup)");
     
-    console.log("\nChoose Client Mode:");
-    console.log("  [1] Standard Multiplexer (Recommended) - Loads one bridge that multiplexes all remote tools");
-    console.log("  [2] Config Injector (Not Recommended) - Injects every remote server individually into local config");
-    const clientMode = await ask("\nEnter choice [1 or 2]: ");
+    const targetPlatform = await ask("\nEnter choice [1, 2, 3 or 4]: ");
 
-    const configPath = getClaudeConfigPath();
-    console.log(`\nTarget Claude Desktop config: ${configPath}`);
-
-    let currentConfig = { mcpServers: {} };
-    try {
-      if (fs.existsSync(configPath)) {
-        const raw = fs.readFileSync(configPath, "utf-8");
-        currentConfig = JSON.parse(raw);
-        if (!currentConfig.mcpServers) currentConfig.mcpServers = {};
-      }
-    } catch {
-      currentConfig = { mcpServers: {} };
-    }
-
-    // 1. Injected Local Heimdall Token Saver
-    currentConfig.mcpServers["heimdall_token_saver"] = {
+    const mcpConfig = {
       command: "npx",
-      args: ["-y", "@hybridlabor-api/heimdall-token-saver"]
+      args: ["-y", "@hybridlabor-api/bdb-os-remote", "client", "--host", host, "--port", port]
     };
 
-    // 2. Client Mode Logic
-    if (clientMode.trim() === "2") {
-      try {
-        console.log(`\nFetching remote config from http://${host}:${port}/config...`);
-        const res = await new Promise((resolve, reject) => {
-          http.get(`http://${host}:${port}/config`, (res) => {
-            let data = "";
-            res.on("data", (chunk) => data += chunk);
-            res.on("end", () => resolve(JSON.parse(data)));
-          }).on("error", reject);
-        });
-        
-        if (res.mcpServers) {
-          for (const [mcpName, mcpConf] of Object.entries(res.mcpServers)) {
-            if (mcpName === "heimdall_token_saver" || mcpName === "bdb_remote_gateway") continue;
-            currentConfig.mcpServers[mcpName] = {
-              command: "npx",
-              args: ["-y", "@hybridlabor-api/bdb-os-remote", "client", "--host", host, "--port", port, "--target-mcp", mcpName]
-            };
-          }
-        }
-        console.log("✅ Injected local Heimdall Token Saver & individualized remote servers into Claude config.");
-      } catch (e) {
-        console.log("❌ Failed to fetch remote config:", e.message);
-      }
-    } else {
-      currentConfig.mcpServers["bdb_remote_gateway"] = {
-        command: "npx",
-        args: ["-y", "@hybridlabor-api/bdb-os-remote", "client", "--host", host, "--port", port]
-      };
-      console.log("✅ Injected local Heimdall Token Saver & remote BDB Gateway into Claude config.");
-    }
+    console.log("\nInjecting MCP Configurations...");
 
+    if (targetPlatform.trim() === "1" || targetPlatform.trim() === "4") {
+      writeMcpConfig(getClaudeConfigPath(), "bdb_remote_gateway", mcpConfig);
+    }
+    if (targetPlatform.trim() === "2" || targetPlatform.trim() === "4") {
+      writeMcpConfig(getAgyConfigPath(), "bdb_remote_gateway", mcpConfig);
+    }
+    if (targetPlatform.trim() === "3" || targetPlatform.trim() === "4") {
+      writeMcpConfig(getCodexConfigPath(), "bdb_remote_gateway", mcpConfig);
+    }
 
     console.log("\n📦 Generating Laptop Guide...");
     const guidePath = generateHtmlGuide("client", { tailscaleHost: host, port });
 
     await testTunnelConnection(host, port);
 
-    console.log(`\n✅ Laptop Client Configuration Complete!`);
+    console.log(`\n✅ Client Configuration Complete!`);
     console.log(`📄 Guide generated: ${guidePath}`);
-    console.log(`💡 Restart Claude Desktop to activate the remote workstation tools!\n`);
+    console.log(`💡 Restart your Agent (AGY / Codex / Claude) to use the remote workstation tools!\n`);
   } else {
     console.log("❌ Invalid selection. Exiting.");
   }

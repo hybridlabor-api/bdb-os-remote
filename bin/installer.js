@@ -4,6 +4,7 @@ import readline from "node:readline";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import http from "node:http";
 import { execSync } from "node:child_process";
 import { generateHtmlGuide } from "../src/docs/guide-generator.js";
 
@@ -35,11 +36,74 @@ function checkTailscale() {
   }
 }
 
+function checkOpenSSH() {
+  console.log("🔍 Auditing OpenSSH configuration...");
+  try {
+    const platform = process.platform;
+    if (platform === "win32") {
+      // Check if sshd is running on Windows
+      const out = execSync("powershell -Command \"Get-Service sshd -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Status\"", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
+      if (out.trim() === "Running") {
+        console.log("   ✅ Windows OpenSSH Server is installed and Running.");
+      } else {
+        console.log("   ⚠️ Windows OpenSSH Server is not running or not installed. (Optional for SSE, required for mosh/tmux fallback).");
+      }
+    } else if (platform === "darwin") {
+      const out = execSync("sudo systemsetup -getremotelogin", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
+      if (out.includes("Remote Login: On")) {
+        console.log("   ✅ macOS Remote Login (SSH) is enabled.");
+      } else {
+        console.log("   ⚠️ macOS Remote Login (SSH) is disabled. Enable it in Settings > Sharing.");
+      }
+    } else {
+      const out = execSync("systemctl is-active sshd || systemctl is-active ssh", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
+      if (out.trim() === "active") {
+        console.log("   ✅ Linux SSH Daemon is active.");
+      } else {
+        console.log("   ⚠️ Linux SSH Daemon is inactive.");
+      }
+    }
+  } catch (err) {
+    console.log("   ⚠️ Could not automatically verify OpenSSH status.");
+  }
+}
+
+async function testTunnelConnection(host, port) {
+  return new Promise((resolve) => {
+    console.log(`\n🔌 Testing Tailscale tunnel to Workstation (http://${host}:${port}/health)...`);
+    const req = http.get(`http://${host}:${port}/health`, { timeout: 5000 }, (res) => {
+      let data = "";
+      res.on("data", (chunk) => (data += chunk));
+      res.on("end", () => {
+        if (res.statusCode === 200) {
+          console.log("   ✅ Connection successful! Remote Gateway is ONLINE.");
+          resolve(true);
+        } else {
+          console.log(`   ❌ Connection failed (HTTP ${res.statusCode}). Gateway might not be running yet.`);
+          resolve(false);
+        }
+      });
+    });
+    
+    req.on("error", (err) => {
+      console.log(`   ❌ Tunnel test failed: ${err.message}.`);
+      console.log(`   💡 Ensure the Workstation is turned on, Tailscale is connected, and the gateway is running.`);
+      resolve(false);
+    });
+    
+    req.on("timeout", () => {
+      req.destroy();
+      console.log(`   ❌ Tunnel test timed out. Tailscale might be disconnected or IP is wrong.`);
+      resolve(false);
+    });
+  });
+}
+
 async function runWizard() {
   console.clear();
   console.log(`
 =====================================================
-🚀 BDB OS Remote Workspace – Setup Wizard (v1.0.0)
+🚀 BDB OS Remote Workspace – Setup Wizard (v1.0.1)
    Zero-Trust SSE Gateway & Mobile Thin-Client Setup
 =====================================================
 `);
@@ -53,7 +117,9 @@ async function runWizard() {
     console.log("   Please ensure Tailscale is installed and logged in on both machines (https://tailscale.com).\n");
   }
 
-  console.log("How do you want to configure THIS machine?");
+  checkOpenSSH();
+
+  console.log("\nHow do you want to configure THIS machine?");
   console.log("  [1] Workstation (Server Mode – Runs memB, Synapse, Filesystem & Zipper)");
   console.log("  [2] Laptop (Client Mode – Thin-Client with local Heimdall & Remote Bridge)");
   
@@ -110,6 +176,8 @@ async function runWizard() {
 
     console.log("\n📦 Generating Laptop Guide...");
     const guidePath = generateHtmlGuide("client", { tailscaleHost: host, port });
+
+    await testTunnelConnection(host, port);
 
     console.log(`\n✅ Laptop Client Configuration Complete!`);
     console.log(`📄 Guide generated: ${guidePath}`);

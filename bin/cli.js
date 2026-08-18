@@ -37,7 +37,31 @@ async function main() {
       break;
     }
 
-    
+    case "service": {
+      const { ServiceManager } = await import("../src/server/service-manager.js");
+      const subAction = args[1] || "status";
+      const port = parseInt(flags.port, 10) || 8000;
+      const workspace = flags.workspace || undefined;
+      const sm = new ServiceManager({ port, workspace });
+
+      switch (subAction) {
+        case "install":
+          sm.install();
+          break;
+        case "uninstall":
+        case "remove":
+          sm.uninstall();
+          break;
+        case "status":
+          sm.status();
+          break;
+        default:
+          console.log("Usage: bdb-remote service [install|uninstall|status] [--port 8000] [--workspace <path>]");
+          break;
+      }
+      break;
+    }
+
     case "server": {
       const port = parseInt(flags.port, 10) || 8000;
       const targetMcp = flags["target-mcp"] || null;
@@ -114,7 +138,9 @@ Usage:
   bdb-remote status [--host <ip/magicdns>] [--port 8000]
     Check the health status of the remote gateway.
 
-  
+  bdb-remote service [install|uninstall|status] [--port 8000] [--workspace <path>]
+    Manage the persistent OS autostart background daemon (LaunchAgent / Windows Task).
+
   bdb-remote ui
     Launch the BDB CONNECT Desktop Menubar App.
 

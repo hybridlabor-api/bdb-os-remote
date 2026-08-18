@@ -139,6 +139,16 @@ app.on('ready', () => {
           }
         }
       },
+      {
+        label: app.getLoginItemSettings().openAtLogin ? '✓ Start at Login' : 'Start at Login',
+        click: () => {
+          const current = app.getLoginItemSettings().openAtLogin;
+          app.setLoginItemSettings({
+            openAtLogin: !current,
+            openAsHidden: true
+          });
+        }
+      },
       { type: 'separator' },
       {
         label: 'Quit BDB CONNECT',

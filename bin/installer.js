@@ -202,8 +202,15 @@ export async function runWizard() {
     const guidePath = generateHtmlGuide("server", { port });
 
     console.log(`\n✅ Workstation Configuration Complete!`);
-    console.log(`📄 Guide generated: ${guidePath}`);
+    const enableAutostart = await ask("\n👉 Möchtest du den Gateway-Server als dauerhaften OS-Autostart-Dienst (LaunchAgent / Windows Task) einrichten? (y/n) ");
+    if (enableAutostart.trim().toLowerCase() === "y") {
+      const { ServiceManager } = await import("../src/server/service-manager.js");
+      const sm = new ServiceManager({ port: parseInt(port, 10), workspace });
+      sm.install();
+    }
+
     console.log(`\nTo start the gateway on this workstation:`);
+    console.log(`   • Via OS Autostart: Bereits als Hintergrunddienst aktiv!`);
     console.log(`   • Via Menubar App: Launch 'BDB CONNECT' from Applications`);
     console.log(`   • Via CLI: npx @hybridlabor-api/bdb-os-remote server --port ${port} --workspace "${workspace}"\n`);
 

@@ -1,5 +1,12 @@
 # Release Notes
 
+## [v1.5.0] – 2026-08-19
+### Native OS Background Service & Autostart Daemon
+- **Service Manager (`src/server/service-manager.js`)**: Native OS daemon integration for macOS (`launchd` LaunchAgent), Windows (Task Scheduler `schtasks`), and Linux (`systemd` user units).
+- **CLI Service Commands (`bin/cli.js`)**: Added `bdb-remote service [install|uninstall|status]` to manage background daemons without keeping terminal sessions alive.
+- **Wizard Integration (`bin/installer.js`)**: Workstation setup offers one-click persistent OS autostart service installation.
+- **Electron Start at Login (`src/ui/main.js`)**: Added "Start at Login" toggle to menubar tray context menu.
+
 ## [v1.4.0] – 2026-08-19
 ### Zero-Touch Windows OpenSSH Server Auto-Configuration & UAC Elevation
 - **Interactive OpenSSH Fixer (`bin/installer.js`)**: Installer now detects missing or stopped `sshd` services on Windows and offers automatic installation, startup, autostart configuration, and port 22 firewall rule creation via elevated UAC PowerShell execution.

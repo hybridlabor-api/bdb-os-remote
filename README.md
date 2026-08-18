@@ -49,11 +49,18 @@ npx @hybridlabor-api/bdb-os-remote@latest installer
 [Step 2: Laptop (Client)]            ──────▶ Connects & Injects AGY / Codex / Claude Config
 ```
 
-### Step 1: Workstation (Server)
-1. Run the installer and choose `[1] Workstation (Server Mode)` or launch the **BDB CONNECT** Menubar App.
-2. Start the SSE gateway daemon (e.g. on port `9080`):
+### Step 1: Workstation (Server & Autostart Daemon)
+1. Run the installer and choose `[1] Workstation (Server Mode)` to automatically register the background service, or install the native **BDB CONNECT** Menubar App.
+2. Or manage the persistent OS autostart daemon directly via CLI:
    ```bash
-   npx @hybridlabor-api/bdb-os-remote@latest server --port 9080 --workspace "/Users/timrennings/bdb-dev"
+   # Install and start as a background daemon (LaunchAgent / Windows Scheduled Task)
+   npx @hybridlabor-api/bdb-os-remote@latest service install --port 9080 --workspace "/Users/timrennings/bdb-dev"
+
+   # Check daemon status
+   npx @hybridlabor-api/bdb-os-remote@latest service status
+
+   # Uninstall daemon
+   npx @hybridlabor-api/bdb-os-remote@latest service uninstall
    ```
 
 ### Step 2: Laptop (Client)

@@ -42,7 +42,7 @@ app.on('ready', () => {
     index: `file://${path.join(__dirname, 'index.html')}`,
     browserWindow: {
       width: 320,
-      height: 440,
+      height: 460,
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
@@ -51,6 +51,9 @@ app.on('ready', () => {
       alwaysOnTop: false,
       frame: false,
       transparent: true,
+      backgroundColor: '#00000000',
+      vibrancy: isMac ? 'under-window' : undefined,
+      visualEffectState: isMac ? 'active' : undefined,
       hasShadow: false,
       resizable: false,
       skipTaskbar: true

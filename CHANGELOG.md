@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/hybridlabor-api/bdb-os-remote/compare/v1.3.0...v1.4.0) (2026-08-18)
+
+
+### Features
+
+* **installer:** add zero-touch Windows OpenSSH auto-installation with UAC elevation ([0e9c166](https://github.com/hybridlabor-api/bdb-os-remote/commit/0e9c1662016f5a33c2b325f557ae3a8da2a4eefd))
+
 ## [1.3.0](https://github.com/hybridlabor-api/bdb-os-remote/compare/v1.2.0...v1.3.0) (2026-08-18)
 
 

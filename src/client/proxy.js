@@ -5,6 +5,7 @@ export class BdbRemoteProxy {
   constructor(options = {}) {
     this.host = options.host || "127.0.0.1";
     this.port = options.port || 8000;
+    this.targetMcp = options.targetMcp || null;
     this.baseUrl = `http://${this.host}:${this.port}`;
     this.sessionId = null;
     this.connected = false;
@@ -52,6 +53,7 @@ export class BdbRemoteProxy {
 
   sendJsonRpc(payload) {
     return new Promise((resolve, reject) => {
+      if (this.targetMcp) payload.targetMcp = this.targetMcp;
       const data = JSON.stringify(payload);
       const url = new URL(`${this.baseUrl}/message`);
 

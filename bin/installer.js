@@ -143,6 +143,12 @@ async function runWizard() {
     const host = (await ask("Enter Workstation Tailscale Name/IP (e.g. noah-workstation): ")) || "noah-workstation";
     const port = (await ask("Enter Workstation port (default 8000): ")) || "8000";
 
+    
+    console.log("\nChoose Client Mode:");
+    console.log("  [1] Standard Multiplexer (Recommended) - Loads one bridge that multiplexes all remote tools");
+    console.log("  [2] Config Injector (Not Recommended) - Injects every remote server individually into local config");
+    const clientMode = await ask("\nEnter choice [1 or 2]: ");
+
     const configPath = getClaudeConfigPath();
     console.log(`\nTarget Claude Desktop config: ${configPath}`);
 
@@ -163,16 +169,39 @@ async function runWizard() {
       args: ["-y", "@hybridlabor-api/heimdall-token-saver"]
     };
 
-    // 2. Injected Remote BDB Gateway via SSE Proxy
-    currentConfig.mcpServers["bdb_remote_gateway"] = {
-      command: "npx",
-      args: ["-y", "@hybridlabor-api/bdb-os-remote", "client", "--host", host, "--port", port]
-    };
+    // 2. Client Mode Logic
+    if (clientMode.trim() === "2") {
+      try {
+        console.log(`\nFetching remote config from http://${host}:${port}/config...`);
+        const res = await new Promise((resolve, reject) => {
+          http.get(`http://${host}:${port}/config`, (res) => {
+            let data = "";
+            res.on("data", (chunk) => data += chunk);
+            res.on("end", () => resolve(JSON.parse(data)));
+          }).on("error", reject);
+        });
+        
+        if (res.mcpServers) {
+          for (const [mcpName, mcpConf] of Object.entries(res.mcpServers)) {
+            if (mcpName === "heimdall_token_saver" || mcpName === "bdb_remote_gateway") continue;
+            currentConfig.mcpServers[mcpName] = {
+              command: "npx",
+              args: ["-y", "@hybridlabor-api/bdb-os-remote", "client", "--host", host, "--port", port, "--target-mcp", mcpName]
+            };
+          }
+        }
+        console.log("✅ Injected local Heimdall Token Saver & individualized remote servers into Claude config.");
+      } catch (e) {
+        console.log("❌ Failed to fetch remote config:", e.message);
+      }
+    } else {
+      currentConfig.mcpServers["bdb_remote_gateway"] = {
+        command: "npx",
+        args: ["-y", "@hybridlabor-api/bdb-os-remote", "client", "--host", host, "--port", port]
+      };
+      console.log("✅ Injected local Heimdall Token Saver & remote BDB Gateway into Claude config.");
+    }
 
-    fs.mkdirSync(path.dirname(configPath), { recursive: true });
-    fs.writeFileSync(configPath, JSON.stringify(currentConfig, null, 2), "utf-8");
-
-    console.log("✅ Injected local Heimdall Token Saver & remote BDB Gateway into Claude config.");
 
     console.log("\n📦 Generating Laptop Guide...");
     const guidePath = generateHtmlGuide("client", { tailscaleHost: host, port });

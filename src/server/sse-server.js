@@ -6,6 +6,7 @@ import { exec, spawn } from "node:child_process";
 import { promisify } from "node:util";
 import zlib from "node:zlib";
 import crypto from "node:crypto";
+import { McpMultiplexer } from "./multiplexer.js";
 
 const execAsync = promisify(exec);
 
@@ -16,10 +17,13 @@ export class BdbRemoteServer {
     this.workspaceDir = options.workspaceDir || path.join(os.homedir(), "bdb-dev");
     this.sessions = new Map();
     this.server = null;
+    this.multiplexer = new McpMultiplexer();
   }
 
   start() {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      await this.multiplexer.init();
+
       this.server = http.createServer(async (req, res) => {
         const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
 
@@ -37,6 +41,8 @@ export class BdbRemoteServer {
         try {
           if (url.pathname === "/health") {
             this.handleHealth(req, res);
+          } else if (url.pathname === "/config") {
+            this.handleConfig(req, res);
           } else if (url.pathname === "/sse") {
             this.handleSSE(req, res);
           } else if (url.pathname === "/message") {
@@ -68,6 +74,16 @@ export class BdbRemoteServer {
         resolve();
       }
     });
+  }
+
+  handleConfig(req, res) {
+    if (this.multiplexer.config) {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(this.multiplexer.config));
+    } else {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Config not found" }));
+    }
   }
 
   handleHealth(req, res) {
@@ -137,7 +153,13 @@ export class BdbRemoteServer {
       return;
     }
 
-    const response = await this.dispatchJsonRpc(requestJson);
+    const targetMcp = url.searchParams.get("targetMcp") || requestJson.targetMcp;
+    let response;
+    if (targetMcp) {
+      response = await this.multiplexer.forwardTargetMcp(targetMcp, requestJson);
+    } else {
+      response = await this.dispatchJsonRpc(requestJson);
+    }
 
     // If SSE session exists, send via SSE
     if (session) {
@@ -175,11 +197,7 @@ export class BdbRemoteServer {
     }
 
     if (method === "tools/list") {
-      return {
-        jsonrpc: "2.0",
-        id,
-        result: {
-          tools: [
+      const nativeTools = [
             {
               name: "workstation_read_file",
               description: "Read a file from the remote workstation filesystem.",
@@ -270,7 +288,13 @@ export class BdbRemoteServer {
                 required: ["projectName"]
               }
             }
-          ]
+          ];
+      const multiplexerTools = await this.multiplexer.getToolsList();
+      return {
+        jsonrpc: "2.0",
+        id,
+        result: {
+          tools: [...nativeTools, ...multiplexerTools]
         }
       };
     }
@@ -278,19 +302,24 @@ export class BdbRemoteServer {
     if (method === "tools/call") {
       const { name, arguments: args } = params || {};
       try {
-        const toolResult = await this.executeTool(name, args || {});
-        return {
-          jsonrpc: "2.0",
-          id,
-          result: {
-            content: [
-              {
-                type: "text",
-                text: typeof toolResult === "string" ? toolResult : JSON.stringify(toolResult, null, 2)
-              }
-            ]
-          }
-        };
+        let toolResult;
+        if (this.multiplexer.toolRouting.has(name)) {
+          return await this.multiplexer.callTool(name, args || {});
+        } else {
+          toolResult = await this.executeTool(name, args || {});
+          return {
+            jsonrpc: "2.0",
+            id,
+            result: {
+              content: [
+                {
+                  type: "text",
+                  text: typeof toolResult === "string" ? toolResult : JSON.stringify(toolResult, null, 2)
+                }
+              ]
+            }
+          };
+        }
       } catch (err) {
         return {
           jsonrpc: "2.0",
@@ -301,6 +330,11 @@ export class BdbRemoteServer {
           }
         };
       }
+    }
+
+    if (method === "prompts/list" || method === "resources/list") {
+        // Simple routing for other standard MCP methods if needed
+        return { jsonrpc: "2.0", id, result: { [method.split('/')[0]]: [] } };
     }
 
     return {

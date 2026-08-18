@@ -31,6 +31,7 @@ async function main() {
   switch (command) {
     case "server": {
       const port = parseInt(flags.port, 10) || 8000;
+      const targetMcp = flags["target-mcp"] || null;
       const host = flags.host || "0.0.0.0";
       const workspace = flags.workspace || undefined;
 
@@ -46,7 +47,7 @@ async function main() {
       const host = flags.host || "127.0.0.1";
       const port = parseInt(flags.port, 10) || 8000;
 
-      const proxy = new BdbRemoteProxy({ host, port });
+      const proxy = new BdbRemoteProxy({ host, port, targetMcp });
       await proxy.start();
       break;
     }

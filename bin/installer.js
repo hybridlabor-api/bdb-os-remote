@@ -217,42 +217,56 @@ export async function runWizard() {
   }
 
 
-  const launchUi = await ask("\n🚀 Möchtest du die grafische BDB CONNECT App jetzt starten und verknüpfen? (y/n) ");
-  if (launchUi.trim().toLowerCase() === "y") {
-    console.log("Starte Desktop App...");
-    const { spawn } = await import("node:child_process");
-    const { default: electronPath } = await import("electron");
-    const { fileURLToPath } = await import("node:url");
-    
-    // We already have 'path' and 'os' and 'fs' available in the file scope
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const uiPath = path.join(__dirname, "../src/ui/main.js");
-    
-    if (os.platform() === 'win32') {
-       try {
-           const pspath = path.join(os.tmpdir(), 'create_shortcut.ps1');
-           const iconPath = path.join(__dirname, "../src/ui/icon.png").replace(/\\/g, "\\");
-           const script = `
-$WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$Home\\Desktop\\BDB CONNECT.lnk")
-$Shortcut.TargetPath = "npx.cmd"
-$Shortcut.Arguments = "@hybridlabor-api/bdb-os-remote@latest ui"
-$Shortcut.IconLocation = "${iconPath}"
-$Shortcut.Save()
-`;
-           fs.writeFileSync(pspath, script);
-           spawn("powershell.exe", ["-ExecutionPolicy", "Bypass", "-File", pspath], { stdio: 'ignore' }).unref();
-           console.log("✅ Windows Desktop-Verknüpfung wurde angelegt!");
-       } catch (e) {
-           console.log("Info: Desktop-Verknüpfung konnte nicht angelegt werden.");
-       }
+  
+  const installNative = await ask("\n🚀 Möchtest du die native BDB CONNECT Desktop-App (inkl. System-Integration) permanent installieren? (y/n) ");
+  if (installNative.trim().toLowerCase() === "y") {
+    console.log("🔍 Suche nach dem neuesten Release auf GitHub...");
+    try {
+      const { execSync, spawn } = await import("node:child_process");
+      const https = await import("node:https");
+      
+      const getLatestRelease = () => new Promise((resolve, reject) => {
+        https.get('https://api.github.com/repos/hybridlabor-api/bdb-os-remote/releases/latest', {
+          headers: { 'User-Agent': 'NodeJS-BDB-Installer' }
+        }, (res) => {
+          let data = '';
+          res.on('data', chunk => data += chunk);
+          res.on('end', () => {
+            if (res.statusCode === 200) resolve(JSON.parse(data));
+            else reject(new Error('Failed to fetch release: ' + res.statusCode));
+          });
+        }).on('error', reject);
+      });
+
+      const releaseInfo = await getLatestRelease();
+      const ext = os.platform() === 'win32' ? '.exe' : '.dmg';
+      const asset = releaseInfo.assets.find(a => a.name.endsWith(ext));
+
+      if (!asset) {
+         console.log(`❌ Keine passende ${ext} Datei im neuesten Release gefunden.`);
+      } else {
+         const targetFile = path.join(os.tmpdir(), asset.name);
+         console.log(`⬇️  Lade ${asset.name} herunter (${(asset.size/1024/1024).toFixed(1)} MB) ... Bitte warten!`);
+         
+         // Use native curl for robust downloading (available on Win10+ and Mac)
+         execSync(`curl -L -s -o "${targetFile}" "${asset.browser_download_url}"`, { stdio: 'inherit' });
+         
+         console.log("✅ Download abgeschlossen! Starte den System-Installer...");
+         
+         if (os.platform() === 'win32') {
+             spawn('cmd.exe', ['/c', 'start', '""', targetFile], { detached: true, stdio: 'ignore' }).unref();
+         } else if (os.platform() === 'darwin') {
+             spawn('open', [targetFile], { detached: true, stdio: 'ignore' }).unref();
+         }
+         console.log("🎉 Der native Installer wurde geöffnet. Bitte folge den Anweisungen auf dem Bildschirm.");
+      }
+    } catch (err) {
+      console.log("❌ Fehler beim Herunterladen: " + err.message);
+      console.log("Bitte lade die App manuell von GitHub herunter.");
     }
-    
-    const child = spawn(electronPath, [uiPath], { detached: true, stdio: 'ignore' });
-    child.unref();
   }
   rl.close();
+
 
 }
 

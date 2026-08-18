@@ -68,10 +68,9 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "electron-builder": "^26.15.3"
-  },
-  "dependencies": {
+    "electron-builder": "^26.15.3",
     "electron": "^43.4.0",
     "menubar": "^9.5.3"
-  }
+  },
+  "dependencies": {}
 }

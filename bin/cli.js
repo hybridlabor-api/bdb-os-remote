@@ -38,25 +38,6 @@ async function main() {
     }
 
     
-    case "ui": {
-      console.log("🚀 Starting BDB CONNECT Desktop App...");
-      const { spawn } = await import("node:child_process");
-      const { default: electronPath } = await import("electron");
-      const { fileURLToPath } = await import("node:url");
-      const path = await import("node:path");
-      
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = path.dirname(__filename);
-      const uiPath = path.join(__dirname, "../src/ui/main.js");
-      
-      const child = spawn(electronPath, [uiPath], {
-        detached: true,
-        stdio: "ignore"
-      });
-      child.unref();
-      break;
-    }
-
     case "server": {
       const port = parseInt(flags.port, 10) || 8000;
       const targetMcp = flags["target-mcp"] || null;

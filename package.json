@@ -10,6 +10,12 @@
     "bdb-remote-installer": "bin/installer.js",
     "installer": "bin/installer.js"
   },
+  "files": [
+    "bin",
+    "src",
+    "package.json",
+    "README.md"
+  ],
   "publishConfig": {
     "access": "public"
   },

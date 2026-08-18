@@ -1,0 +1,9 @@
+.github/
+.openwiki/
+production_artifacts/
+docs/
+test/
+.DS_Store
+dist/
+build/
+*.log

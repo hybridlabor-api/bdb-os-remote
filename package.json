@@ -5,6 +5,7 @@
   "type": "module",
   "main": "src/index.js",
   "bin": {
+    "bdb-os-remote": "bin/cli.js",
     "bdb-remote": "bin/cli.js",
     "bdb-remote-installer": "bin/installer.js"
   },

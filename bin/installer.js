@@ -127,7 +127,14 @@ function writeMcpConfig(filePath, mcpKey, mcpConfig) {
   console.log(`   ✅ Config written to: ${filePath}`);
 }
 
-async function runWizard() {
+export async function runWizard() {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  const ask = (query) => new Promise((resolve) => rl.question(query, resolve));
+
   console.clear();
   console.log(`
 =====================================================
@@ -165,7 +172,7 @@ async function runWizard() {
     console.log(`📄 Guide generated: ${guidePath}`);
     console.log(`\nTo start the gateway on this workstation:`);
     console.log(`   • Via Menubar App: Launch 'BDB CONNECT' from Applications`);
-    console.log(`   • Via CLI: npx -y --package=@hybridlabor-api/bdb-os-remote bdb-remote server --port ${port} --workspace "${workspace}"\n`);
+    console.log(`   • Via CLI: npx @hybridlabor-api/bdb-os-remote server --port ${port} --workspace "${workspace}"\n`);
 
   } else if (choice.trim() === "2") {
     console.log("\n--- Configuring Laptop (Client Mode) ---");
@@ -182,7 +189,7 @@ async function runWizard() {
 
     const mcpConfig = {
       command: "npx",
-      args: ["-y", "--package=@hybridlabor-api/bdb-os-remote", "bdb-remote", "client", "--host", host, "--port", port]
+      args: ["-y", "@hybridlabor-api/bdb-os-remote", "client", "--host", host, "--port", port]
     };
 
     console.log("\nInjecting MCP Configurations...");
@@ -212,7 +219,9 @@ async function runWizard() {
   rl.close();
 }
 
-runWizard().catch((err) => {
-  console.error("❌ Wizard error:", err.message);
-  rl.close();
-});
+// Auto-run if executed directly as script
+if (process.argv[1] && (process.argv[1].endsWith("installer.js") || process.argv[1].endsWith("bdb-remote-installer"))) {
+  runWizard().catch((err) => {
+    console.error("❌ Wizard error:", err.message);
+  });
+}

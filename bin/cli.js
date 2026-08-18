@@ -29,6 +29,14 @@ const flags = parseFlags(args.slice(1));
 
 async function main() {
   switch (command) {
+    case "installer":
+    case "setup":
+    case "wizard": {
+      const { runWizard } = await import("./installer.js");
+      await runWizard();
+      break;
+    }
+
     case "server": {
       const port = parseInt(flags.port, 10) || 8000;
       const targetMcp = flags["target-mcp"] || null;

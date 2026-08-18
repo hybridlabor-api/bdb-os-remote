@@ -1,93 +1,35 @@
-import assert from "node:assert";
-import http from "node:http";
-import { BdbRemoteServer } from "../src/server/sse-server.js";
+import assert from 'node:assert';
+import { BdbConnectGateway } from '../src/server/gateway.js';
+import { BdbConnectSidecar } from '../src/client/sidecar.js';
+import { TailscaleIntegration } from '../src/tailscale/tailscale.js';
 
 async function runTests() {
-  console.log("🧪 Starting BDB Remote Gateway test suite...\n");
+  console.log('Running Tests...');
 
-  const server = new BdbRemoteServer({ port: 8999, host: "127.0.0.1" });
-  await server.start();
-  console.log("✓ Server started on port 8999");
+  // Test 1: Tailscale IP Validation
+  const ts = new TailscaleIntegration();
+  const mockReqValid = { socket: { remoteAddress: '100.111.222.333' } };
+  const mockReqInvalid = { socket: { remoteAddress: '192.168.1.1' } };
+  
+  assert.strictEqual(ts.validateTailscaleIp(mockReqValid), true, 'Tailscale IP should be valid');
+  assert.strictEqual(ts.validateTailscaleIp(mockReqInvalid), false, 'Local network IP should be invalid');
 
-  // 1. Health check
-  const healthRes = await new Promise((resolve) => {
-    http.get("http://127.0.0.1:8999/health", (res) => {
-      let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => resolve(JSON.parse(data)));
-    });
-  });
-  assert.strictEqual(healthRes.status, "ok");
-  assert.strictEqual(healthRes.service, "bdb-os-remote-gateway");
-  console.log("✓ /health check passed");
+  // Test 2: Gateway instantiates and starts
+  const gateway = new BdbConnectGateway({ port: 8001, tsMode: 'tsnet' });
+  const gwInfo = await gateway.start();
+  assert.strictEqual(gwInfo.port, 8001, 'Gateway should start on assigned port');
+  gateway.stop();
 
-  // 2. Initialize JSON-RPC
-  const initRes = await new Promise((resolve) => {
-    const postData = JSON.stringify({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "initialize",
-      params: {}
-    });
-    const req = http.request(
-      "http://127.0.0.1:8999/message",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Content-Length": Buffer.byteLength(postData)
-        }
-      },
-      (res) => {
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => resolve(JSON.parse(data)));
-      }
-    );
-    req.write(postData);
-    req.end();
-  });
-  assert.strictEqual(initRes.result.serverInfo.name, "bdb-os-remote-gateway");
-  console.log("✓ JSON-RPC initialize passed");
+  // Test 3: Sidecar instantiates and starts
+  const sidecar = new BdbConnectSidecar({ port: 8002, tsMode: 'tsnet' });
+  const scInfo = await sidecar.start();
+  assert.strictEqual(scInfo.port, 8002, 'Sidecar should start on assigned port');
+  sidecar.stop();
 
-  // 3. Tools list
-  const toolsRes = await new Promise((resolve) => {
-    const postData = JSON.stringify({
-      jsonrpc: "2.0",
-      id: 2,
-      method: "tools/list",
-      params: {}
-    });
-    const req = http.request(
-      "http://127.0.0.1:8999/message",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Content-Length": Buffer.byteLength(postData)
-        }
-      },
-      (res) => {
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => resolve(JSON.parse(data)));
-      }
-    );
-    req.write(postData);
-    req.end();
-  });
-  assert(Array.isArray(toolsRes.result.tools));
-  assert(toolsRes.result.tools.some((t) => t.name === "clone_workstation_project"));
-  assert(toolsRes.result.tools.some((t) => t.name === "workstation_memb_search"));
-  console.log(`✓ JSON-RPC tools/list passed (${toolsRes.result.tools.length} tools registered)`);
-
-  await server.stop();
-  console.log("✓ Server stopped cleanly");
-
-  console.log("\n🎉 All tests passed successfully!");
+  console.log('✅ All tests passed!');
 }
 
-runTests().catch((err) => {
-  console.error("❌ Test failed:", err);
+runTests().catch(err => {
+  console.error('❌ Test failed:', err);
   process.exit(1);
 });

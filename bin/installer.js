@@ -8,13 +8,6 @@ import http from "node:http";
 import { execSync } from "node:child_process";
 import { generateHtmlGuide } from "../src/docs/guide-generator.js";
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-const ask = (query) => new Promise((resolve) => rl.question(query, resolve));
-
 function getClaudeConfigPath() {
   const platform = process.platform;
   if (platform === "win32") {
@@ -44,34 +37,74 @@ function checkTailscale() {
   }
 }
 
-function checkOpenSSH() {
+async function checkOpenSSH(ask) {
   console.log("🔍 Auditing OpenSSH configuration...");
   try {
     const platform = process.platform;
     if (platform === "win32") {
-      const out = execSync("powershell -Command \"Get-Service sshd -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Status\"", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
-      if (out.trim() === "Running") {
-        console.log("   ✅ Windows OpenSSH Server is installed and Running.");
+      let isRunning = false;
+      try {
+        const out = execSync("powershell -Command \"Get-Service sshd -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Status\"", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
+        isRunning = out.trim() === "Running";
+      } catch {
+        isRunning = false;
+      }
+
+      if (isRunning) {
+        console.log("   ✅ Windows OpenSSH Server is installed and Running.\n");
       } else {
-        console.log("   ⚠️ Windows OpenSSH Server is not running or not installed.");
+        console.log("   ⚠️  Windows OpenSSH Server is not running or not installed.");
+        if (ask) {
+          const autoInstall = await ask("   👉 Möchtest du den OpenSSH Server jetzt automatisch installieren & konfigurieren? (Benötigt Admin-Rechte) (y/n) ");
+          if (autoInstall.trim().toLowerCase() === "y") {
+            console.log("   ⏳ Installiere und starte OpenSSH Server via PowerShell (UAC Administrator)...");
+            const psScript = `
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0 -ErrorAction SilentlyContinue
+Start-Service sshd -ErrorAction SilentlyContinue
+Set-Service -Name sshd -StartupType 'Automatic' -ErrorAction SilentlyContinue
+if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
+    New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22 -ErrorAction SilentlyContinue
+}
+`;
+            const tmpPsFile = path.join(os.tmpdir(), `install_ssh_${Date.now()}.ps1`);
+            fs.writeFileSync(tmpPsFile, psScript, "utf-8");
+
+            try {
+              execSync(`powershell -Command "Start-Process powershell -Verb RunAs -ArgumentList '-ExecutionPolicy Bypass -File \\"${tmpPsFile}\\"' -Wait"`, { stdio: "inherit" });
+              
+              const recheck = execSync("powershell -Command \"Get-Service sshd -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Status\"", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
+              if (recheck.trim() === "Running") {
+                console.log("   ✅ OpenSSH Server wurde erfolgreich installiert und läuft jetzt!\n");
+              } else {
+                console.log("   ℹ️  OpenSSH Konfiguration abgeschlossen. Bitte prüfe, ob der Dienst aktiv ist.\n");
+              }
+            } catch (err) {
+              console.log(`   ❌ Konnte OpenSSH nicht automatisch konfigurieren: ${err.message}\n`);
+            } finally {
+              try { fs.unlinkSync(tmpPsFile); } catch {}
+            }
+          } else {
+            console.log("   ℹ️  Übersprungen.\n");
+          }
+        }
       }
     } else if (platform === "darwin") {
       const out = execSync("sudo systemsetup -getremotelogin 2>/dev/null || echo 'Remote Login: Unknown'", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
       if (out.includes("Remote Login: On")) {
-        console.log("   ✅ macOS Remote Login (SSH) is enabled.");
+        console.log("   ✅ macOS Remote Login (SSH) is enabled.\n");
       } else {
-        console.log("   ℹ️ macOS Remote Login check completed.");
+        console.log("   ℹ️ macOS Remote Login check completed.\n");
       }
     } else {
       const out = execSync("systemctl is-active sshd || systemctl is-active ssh", { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
       if (out.trim() === "active") {
-        console.log("   ✅ Linux SSH Daemon is active.");
+        console.log("   ✅ Linux SSH Daemon is active.\n");
       } else {
-        console.log("   ⚠️ Linux SSH Daemon is inactive.");
+        console.log("   ⚠️ Linux SSH Daemon is inactive.\n");
       }
     }
   } catch (err) {
-    console.log("   ℹ️ OpenSSH check passed.");
+    console.log("   ℹ️ OpenSSH check passed.\n");
   }
 }
 
@@ -152,7 +185,7 @@ export async function runWizard() {
     console.log("   Please ensure Tailscale is active on both machines (https://tailscale.com).\n");
   }
 
-  checkOpenSSH();
+  await checkOpenSSH(ask);
 
   console.log("\nHow do you want to configure THIS machine?");
   console.log("  [1] Workstation (Server Mode – Runs Tools, Filesystem, Terminal & MCPs)");

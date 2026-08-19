@@ -1,6 +1,6 @@
 {
   "name": "@hybridlabor-api/bdb-os-remote",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "BDB OS Remote Workspace - Zero-Trust SSE Gateway & Mobile Thin-Client Bridge for Claude Desktop and AI Agents over Tailscale",
   "type": "module",
   "main": "src/index.js",

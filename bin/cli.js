@@ -40,7 +40,7 @@ async function main() {
     case "service": {
       const { ServiceManager } = await import("../src/server/service-manager.js");
       const subAction = args[1] || "status";
-      const port = parseInt(flags.port, 10) || 8000;
+      const port = parseInt(flags.port, 10) || parseInt(process.env.PORT, 10) || parseInt(process.env.BDB_REMOTE_PORT, 10) || 9080;
       const workspace = flags.workspace || undefined;
       const sm = new ServiceManager({ port, workspace });
 
@@ -56,14 +56,14 @@ async function main() {
           sm.status();
           break;
         default:
-          console.log("Usage: bdb-remote service [install|uninstall|status] [--port 8000] [--workspace <path>]");
+          console.log("Usage: bdb-remote service [install|uninstall|status] [--port 9080] [--workspace <path>]");
           break;
       }
       break;
     }
 
     case "server": {
-      const port = parseInt(flags.port, 10) || 8000;
+      const port = parseInt(flags.port, 10) || parseInt(process.env.PORT, 10) || parseInt(process.env.BDB_REMOTE_PORT, 10) || 9080;
       const targetMcp = flags["target-mcp"] || null;
       const host = flags.host || "0.0.0.0";
       const workspace = flags.workspace || undefined;
@@ -78,7 +78,7 @@ async function main() {
 
     case "client": {
       const host = flags.host || "127.0.0.1";
-      const port = parseInt(flags.port, 10) || 8000;
+      const port = parseInt(flags.port, 10) || parseInt(process.env.PORT, 10) || parseInt(process.env.BDB_REMOTE_PORT, 10) || 9080;
 
       const proxy = new BdbRemoteProxy({ host, port, targetMcp });
       await proxy.start();
@@ -88,12 +88,12 @@ async function main() {
     case "pull": {
       const projectName = args[1];
       if (!projectName || projectName.startsWith("--")) {
-        console.error("❌ Usage: bdb-remote pull <project-name> [--host <ip>] [--port 8000]");
+        console.error("❌ Usage: bdb-remote pull <project-name> [--host <ip>] [--port 9080]");
         process.exit(1);
       }
       await pullProject(projectName, {
         host: flags.host,
-        port: parseInt(flags.port, 10) || 8000,
+        port: parseInt(flags.port, 10) || parseInt(process.env.PORT, 10) || parseInt(process.env.BDB_REMOTE_PORT, 10) || 9080,
         dest: flags.dest
       });
       break;
@@ -101,7 +101,7 @@ async function main() {
 
     case "status": {
       const host = flags.host || "127.0.0.1";
-      const port = parseInt(flags.port, 10) || 8000;
+      const port = parseInt(flags.port, 10) || parseInt(process.env.PORT, 10) || parseInt(process.env.BDB_REMOTE_PORT, 10) || 9080;
       console.log(`🔍 Checking status of BDB Remote Gateway at http://${host}:${port}/health...`);
 
       http.get(`http://${host}:${port}/health`, (res) => {
@@ -126,19 +126,19 @@ async function main() {
 BDB OS Remote Workspace CLI v1.0.0
 
 Usage:
-  bdb-remote server [--port 8000] [--workspace <path>]
+  bdb-remote server [--port 9080] [--workspace <path>]
     Start the remote SSE gateway daemon on the Workstation.
 
-  bdb-remote client [--host <ip/magicdns>] [--port 8000]
+  bdb-remote client [--host <ip/magicdns>] [--port 9080]
     Run the stdio-to-SSE bridge for Claude Desktop on the Laptop.
 
-  bdb-remote pull <project-name> [--host <ip/magicdns>] [--port 8000]
+  bdb-remote pull <project-name> [--host <ip/magicdns>] [--port 9080]
     Clone a workstation project archive onto the local laptop.
 
-  bdb-remote status [--host <ip/magicdns>] [--port 8000]
+  bdb-remote status [--host <ip/magicdns>] [--port 9080]
     Check the health status of the remote gateway.
 
-  bdb-remote service [install|uninstall|status] [--port 8000] [--workspace <path>]
+  bdb-remote service [install|uninstall|status] [--port 9080] [--workspace <path>]
     Manage the persistent OS autostart background daemon (LaunchAgent / Windows Task).
 
   bdb-remote ui

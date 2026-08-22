@@ -195,7 +195,7 @@ export async function runWizard() {
 
   if (choice.trim() === "1") {
     console.log("\n--- Configuring Workstation (Server Mode) ---");
-    const port = (await ask("Enter server port (default 8000): ")) || "8000";
+    const port = (await ask("Enter server port (default 9080): ")) || "9080";
     const workspace = (await ask(`Enter workspace path (default ${path.join(os.homedir(), "bdb-dev")}): `)) || path.join(os.homedir(), "bdb-dev");
 
     console.log("\n📦 Generating Workstation Guide...");
@@ -217,7 +217,7 @@ export async function runWizard() {
   } else if (choice.trim() === "2") {
     console.log("\n--- Configuring Laptop (Client Mode) ---");
     const host = (await ask("Enter Workstation Tailscale Name/IP (e.g. 100.123.207.82): ")) || "127.0.0.1";
-    const port = (await ask("Enter Workstation port (default 8000): ")) || "8000";
+    const port = (await ask("Enter Workstation port (default 9080): ")) || "9080";
 
     console.log("\nWhich AI Agent Harness do you want to configure?");
     console.log("  [1] Claude Desktop");

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/hybridlabor-api/bdb-os-remote/compare/v1.5.0...v1.5.1) (2026-08-22)
+
+
+### Bug Fixes
+
+* **ports:** update default fallback port to 9080 ([38e84bc](https://github.com/hybridlabor-api/bdb-os-remote/commit/38e84bc7bcf92bb8d53b290225be3cb316bf59b8))
+
 ## [1.5.0](https://github.com/hybridlabor-api/bdb-os-remote/compare/v1.4.0...v1.5.0) (2026-08-18)
 
 

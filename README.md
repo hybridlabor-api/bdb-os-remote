@@ -54,7 +54,7 @@ npx @hybridlabor-api/bdb-os-remote@latest installer
 2. Or manage the persistent OS autostart daemon directly via CLI:
    ```bash
    # Install and start as a background daemon (LaunchAgent / Windows Scheduled Task)
-   npx @hybridlabor-api/bdb-os-remote@latest service install --port 9080 --workspace "/Users/timrennings/bdb-dev"
+   npx @hybridlabor-api/bdb-os-remote@latest service install --port 9080 --workspace "~/dev/bdb-dev"
 
    # Check daemon status
    npx @hybridlabor-api/bdb-os-remote@latest service status

@@ -10,6 +10,20 @@ import { McpMultiplexer } from "./multiplexer.js";
 
 const execAsync = promisify(exec);
 
+// Read from the manifest rather than restating it. The two were hardcoded as
+// "1.0.0" and drifted to two majors behind the package they ship in, so every
+// health probe and MCP handshake reported a version this gateway had not been
+// for a year. Falls back to "unknown", which is honest, where a stale literal
+// is not.
+const VERSION = (() => {
+  try {
+    const manifest = new URL("../../package.json", import.meta.url);
+    return JSON.parse(fs.readFileSync(manifest, "utf8")).version || "unknown";
+  } catch {
+    return "unknown";
+  }
+})();
+
 export class BdbRemoteServer {
   constructor(options = {}) {
     this.port = options.port || 8000;
@@ -91,7 +105,7 @@ export class BdbRemoteServer {
     res.end(
       JSON.stringify({
         status: "ok",
-        version: "1.0.0",
+        version: VERSION,
         service: "bdb-os-remote-gateway",
         os: process.platform,
         workspace: this.workspaceDir,
@@ -186,7 +200,7 @@ export class BdbRemoteServer {
           },
           serverInfo: {
             name: "bdb-os-remote-gateway",
-            version: "1.0.0"
+            version: VERSION
           }
         }
       };

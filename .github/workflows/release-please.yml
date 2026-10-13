@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -19,22 +20,19 @@ jobs:
           release-type: node
           package-name: "@hybridlabor-api/bdb-os-remote"
 
-      # The following steps run only if a new release was created by merging the Release Please PR
+      # Publishing no longer depends on release_created: when the publish step failed once (expired token), the
+      # release already exists and a rerun reports no new release. The version check below decides instead.
       - uses: actions/checkout@v4
-        if: ${{ steps.release.outputs.release_created }}
-      
+
       - uses: actions/setup-node@v4
-        if: ${{ steps.release.outputs.release_created }}
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
 
       - run: npm ci
-        if: ${{ steps.release.outputs.release_created }}
 
       - name: Check if version already published
         id: check_version
-        if: ${{ steps.release.outputs.release_created }}
         run: |
           LOCAL_VER=$(node -p "require('./package.json').version")
           REMOTE_VER=$(npm view $(node -p "require('./package.json').name") version 2>/dev/null || echo "none")
@@ -46,7 +44,8 @@ jobs:
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
+      # package.json only changes version through the merged release PR, so this publishes exactly the released version.
       - run: npm publish --access public
-        if: ${{ steps.release.outputs.release_created && steps.check_version.outputs.skip != 'true' }}
+        if: ${{ steps.check_version.outputs.skip != 'true' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

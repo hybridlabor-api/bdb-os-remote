@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/hybridlabor-api/bdb-os-remote/compare/v2.0.1...v2.0.2) (2026-10-06)
+
+
+### Bug Fixes
+
+* report the real version instead of a hardcoded 1.0.0 ([736addd](https://github.com/hybridlabor-api/bdb-os-remote/commit/736addda95ed7e42a0bbc66c7c03e74489e6d804))
+
 ## [1.5.0](https://github.com/hybridlabor-api/bdb-os-remote/compare/v1.4.0...v1.5.0) (2026-08-18)
 
 
